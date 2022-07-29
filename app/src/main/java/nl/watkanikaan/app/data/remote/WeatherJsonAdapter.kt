@@ -32,7 +32,7 @@ class WeatherJsonAdapter {
             Weather.Day.NOW, WeatherEntity.Forecast(
                 dewPoint = dewPoint?.toIntOrNull(),
                 weatherIcon = image.or(),
-                temperature = feelingTemperature.toDoubleOr(),
+                temperature = temperature.toDoubleOr(),
                 windForce = windForce.toIntOr(),
                 windSpeed = windSpeedMs.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationToday.toIntOr(),

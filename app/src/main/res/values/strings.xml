@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Wat kan ik aan?</string>
+    <string name="app_name_param">Wat kan ik %1$s aan?</string>
     <string name="jacket_cold">Winterjas</string>
     <string name="jacket_normal">Tussenjas</string>
     <string name="jacket_warm">Zomerjas</string>
@@ -14,24 +15,55 @@
     <string name="extra_rain">Neem ook een paraplu mee of doe regenkleding aan.</string>
     <string name="extra_rain_windy">Doe ook een regenbroek/jas aan. Een paraplu waait weg.</string>
     <string name="extra_sunny">Vergeet je niet goed in te smeren.</string>
+    <string name="extra_muggy">Het is extreem benauwd buiten.</string>
     <string name="extra_freezing">Doe eventueel ook een muts op, sjaal om en handschoenen aan.</string>
     <string name="now">Nu</string>
     <string name="today">Straks</string>
     <string name="tomorrow">Morgen</string>
-    <string name="day_after_tomorrow">Over-\nmorgen</string>
+    <string name="day_after_tomorrow_break">Over-\nmorgen</string>
+    <string name="day_after_tomorrow">Overmorgen</string>
     <string name="last_updated">Laatste update: %1$s</string>
     <string name="temperature">%1$s°C</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_settings">Settings</string>
+    <string name="menu_settings">Instellingen</string>
+    <string name="title_settings">Instellingen</string>
 
+    <string name="preferences_app_version_title">App versie</string>
+    <string name="preferences_display_dark_mode">Donkere modus</string>
+    <string name="preferences_display_header">Weergave</string>
+    <string name="preferences_profile_header">Profiel</string>
+    <string name="preferences_about_header">Over</string>
 
-    <string name="preferences_app_version_title">App version</string>
-    <string name="preferences_display_dark_mode">Dark mode</string>
-    <string name="preferences_timer_reset_walk">Reset timer</string>
-    <string name="preferences_timer_reset_walk_description">The timer automatically stops when you move and resumes when you\'re inactive</string>
-    <string name="preferences_display_header">Display</string>
-    <string name="preferences_timer_header">Timer</string>
-    <string name="preferences_about_header">About</string>
+    <string name="preferences_profile_thermoception">Thermoceptie</string>
+    <string-array name="thermoception_items">
+        <item>@string/thermoception_label_cold</item>
+        <item>@string/thermoception_label_normal</item>
+        <item>@string/thermoception_label_warm</item>
+    </string-array>
+    <string-array name="thermoception_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="thermoception_label_cold">Koud</string>
+    <string name="thermoception_label_normal">Normaal</string>
+    <string name="thermoception_label_warm">Warm</string>
+    <string name="preferences_rate_app">Beoordeel deze app</string>
+
+    <string name="preferences_profile_gender">Geslacht</string>
+    <string-array name="gender_items">
+        <item>@string/gender_label_other</item>
+        <item>@string/gender_label_man</item>
+        <item>@string/gender_label_woman</item>
+    </string-array>
+    <string-array name="gender_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="gender_label_other">Anders</string>
+    <string name="gender_label_man">Man</string>
+    <string name="gender_label_woman">Vrouw</string>
+
     <string-array name="night_mode_items">
         <item>@string/night_mode_label_auto</item>
         <item>@string/night_mode_label_off</item>
@@ -42,10 +74,12 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    <string name="night_mode_label_auto">Follow system</string>
-    <string name="night_mode_label_off">Off</string>
-    <string name="night_mode_label_on">On</string>
+    <string name="night_mode_label_auto">Volg systeem</string>
+    <string name="night_mode_label_off">Uit</string>
+    <string name="night_mode_label_on">Aan</string>
     <string name="jacket_cold_rain">Waterdichte winterjas</string>
     <string name="jacket_normal_rain">Regenjas</string>
     <string name="jacket_warm_rain">Dunne regenjas of poncho</string>
+    <string name="location">Locatie: %1$s</string>
+    <string name="preferences_profile_age">Leeftijd</string>
 </resources>

@@ -3,7 +3,7 @@ package nl.watkanikaan.app.domain.model
 import nl.watkanikaan.app.R
 
 data class Recommendation(
-//    val day: Int = 0, // 0 == today, 1 == tomorrow, etc
+    val selectedDay: Weather.Day = Weather.Day.NOW,
     val jacket: Jacket = Jacket.NORMAL,
     val top: Top = Top.T_SHIRT,
     val bottom: Bottom = Bottom.LONG,
@@ -32,5 +32,6 @@ data class Recommendation(
         RAIN_WINDY(R.string.extra_rain_windy),
         FREEZING(R.string.extra_freezing),
         SUNNY(R.string.extra_sunny),
+        MUGGY(R.string.extra_muggy),
     }
 }

@@ -3,13 +3,31 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="@string/preferences_timer_header">
+        app:title="@string/preferences_profile_header">
 
-        <SwitchPreferenceCompat
-            app:key="timer_reset_walk"
-            app:title="@string/preferences_timer_reset_walk"
-            android:summary="@string/preferences_timer_reset_walk_description"
-            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/thermoception_items"
+            android:entryValues="@array/thermoception_values"
+            app:iconSpaceReserved="false"
+            app:key="profile_thermoception"
+            app:title="@string/preferences_profile_thermoception" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/gender_items"
+            android:entryValues="@array/gender_values"
+            app:iconSpaceReserved="false"
+            app:key="profile_gender"
+            app:title="@string/preferences_profile_gender" />
+
+        <EditTextPreference
+            android:key="profile_age"
+            android:maxLength="2"
+            app:iconSpaceReserved="false"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:title="@string/preferences_profile_age" />
 
     </PreferenceCategory>
 
@@ -35,11 +53,11 @@
             android:key="preferences_app_version_key"
             android:summary="@string/versionName"
             android:title="@string/preferences_app_version_title"
-            app:iconSpaceReserved="false"/>
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="preferences_rate_app_key"
-            android:title="Rate this app"
+            android:title="@string/preferences_rate_app"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>

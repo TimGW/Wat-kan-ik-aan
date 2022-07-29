@@ -1,6 +1,6 @@
 package nl.watkanikaan.app.domain.model
 
-import kotlin.math.pow
+import nl.watkanikaan.app.R
 
 data class Weather(
     val location: String,
@@ -13,7 +13,15 @@ data class Weather(
         NOW,
         TODAY,
         TOMORROW,
-        DAY_AFTER_TOMORROW
+        DAY_AFTER_TOMORROW;
+
+        // todo remove from model and remove boolean
+        fun toText(isBreak: Boolean = false) = when (this) {
+            NOW -> R.string.now
+            TODAY -> R.string.today
+            TOMORROW -> R.string.tomorrow
+            DAY_AFTER_TOMORROW -> if (isBreak) R.string.day_after_tomorrow_break else R.string.day_after_tomorrow
+        }
     }
 
     data class Forecast(
@@ -25,38 +33,4 @@ data class Weather(
         val chanceOfPrecipitation: Int,
         val chanceOfSun: Int,
     )
-
 }
-
-fun windChill(
-    t: Double,
-    w: Int,
-): Double {
-    return 13.12 + 0.6215 * t - 11.37 * (w * 3.6).pow(0.16) + 0.3965 * t * (w * 3.6).pow(0.16)
-}
-
-//data class Weather(
-//    val location: String,
-//    val feelingTemperature: Float,
-//    val summary: String,
-//    val dewPoint: Int,
-//    val windDirection: String,
-//    val windForce: Int,
-//    val dayExpectation: String,
-//    val sunUpAt: String,
-//    val sunUnderAt: String,
-//    val image: String,
-//    val expectations: List<Expectation>, // todo update to map
-//    val weatherAlarm: String,
-//    val createdAt: Long? = null,
-//    val modifiedAt: Long? = null,
-//) {
-//    data class Expectation(
-//        val weatherIcon: String,
-//        val maxTemp: Int,
-//        val minTemp: Int,
-//        val windForce: Int,
-//        val chanceOfPrecipitation: Int,
-//        val chanceOfSun: Int,
-//    )
-//}

@@ -9,10 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
@@ -25,7 +28,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class WeatherFragment : Fragment() {
-    private val viewModel: WeatherViewModel by viewModels()
+    private val viewModel: WeatherViewModel by activityViewModels()
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var weatherAdapter: WeatherItemAdapter
     private val refresh by lazy {
@@ -65,15 +68,17 @@ class WeatherFragment : Fragment() {
                 viewModel.updateRecommendation(day, forecast)
             }
             adapter = weatherAdapter
-            layoutManager = GridLayoutManager(
+            layoutManager = FlexboxLayoutManager(
                 requireContext(),
-                4,
-                resources.getInteger(R.integer.rv_orientation),
-                false
-            )
+            ).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.SPACE_BETWEEN
+                flexWrap = FlexWrap.NOWRAP
+            }
+
             overScrollMode = View.OVER_SCROLL_NEVER
             isNestedScrollingEnabled = false
-            addItemDecoration(OffsetDecoration(resources.getDimension(R.dimen.keyline_8).toInt()))
+            addItemDecoration(OffsetDecoration(resources.getDimension(R.dimen.keyline_4).toInt()))
         }
 
         observeWeather()
@@ -110,17 +115,16 @@ class WeatherFragment : Fragment() {
     }
 
     private fun updateWeather(weather: Weather) {
-        val updatedAt = SimpleDateFormat(
-            "HH:mm",
-            Locale.getDefault()
-        ).format(Date(weather.modifiedAt ?: 0))
+        val updatedAt = SimpleDateFormat("HH:mm", Locale.getDefault())
+            .format(Date(weather.modifiedAt))
+        binding.location.text = getString(R.string.location, weather.location)
         binding.lastUpdated.text = getString(R.string.last_updated, updatedAt)
-        weatherAdapter.updateItems(weather.forecast.toList())
+        weatherAdapter.updateItems(weather.forecast)
     }
 
     private fun updateRecommendationUI(recommendation: Recommendation) {
         with(recommendation) {
-//            binding.day?.text = weather.location
+            viewModel.updateToolbarTitle(recommendation.selectedDay)
             binding.jacket.text = getString(jacket.type)
             binding.top.text = getString(top.type)
             binding.bottom.text = getString(bottom.type)

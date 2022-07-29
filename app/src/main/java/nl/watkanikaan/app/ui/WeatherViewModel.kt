@@ -29,6 +29,9 @@ class WeatherViewModel @Inject constructor(
     private val _recommendation = MutableStateFlow<Recommendation?>(null)
     val recommendation: StateFlow<Recommendation?> = _recommendation.asStateFlow()
 
+    private val _toolbar = MutableStateFlow<Int?>(null)
+    val toolbar: StateFlow<Int?> = _toolbar.asStateFlow()
+
     init {
         fetchWeatherRecommendation()
     }
@@ -44,16 +47,11 @@ class WeatherViewModel @Inject constructor(
             FetchWeatherUseCase.Params(forceRefresh = isRefreshed)
         ).collect { result: Result<Weather?> ->
             val data: Weather? = result.data
-//            val forecast = data?.forecast.orEmpty()
-//            val weather = result.map(data)
-//                data?.copy(forecast = data.forecast.mapIndexed { index, expectation ->
-//                    expectation.copy(day = index.toDay())
-//                })
-//            )
 
             if (isRefreshed == true) _weather.value = result else _weather.update { result }
-            data?.forecast?.get(Weather.Day.NOW)?.let { executeRecommendation(it) }
-//            if (data != null)  // todo this override the current selected
+
+            val now = Weather.Day.NOW
+            data?.forecast?.get(now)?.let { executeRecommendation(now, it) }
         }
     }
 
@@ -61,17 +59,22 @@ class WeatherViewModel @Inject constructor(
         day: Weather.Day,
         weather: Weather.Forecast,
     ) = viewModelScope.launch {
-        _weather.value.data?.let { executeRecommendation(weather) }
+        _weather.value.data?.let { executeRecommendation(day, weather) }
     }
 
     private suspend fun executeRecommendation(
+        day: Weather.Day,
         weather: Weather.Forecast,
         profile: Profile = Profile(),
     ) {
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(weather, profile)
+            CalcRecommendationUseCase.Params(day, weather, profile)
         ).collect { result ->
             _recommendation.value = result
         }
+    }
+
+    fun updateToolbarTitle(selectedDay: Weather.Day) = viewModelScope.launch {
+        _toolbar.value = selectedDay.toText()
     }
 }
