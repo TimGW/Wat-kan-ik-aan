@@ -7,6 +7,12 @@ import javax.inject.Inject
 class SharedPrefs @Inject constructor(
     private val spm: SharedPrefManager,
 ) {
+    fun setLocationSetting(latitude: Double, longitude: Double) {
+        spm.setStringValue(SHARED_PREF_LOCATION, "$latitude,$longitude")
+    }
+
+    fun getLocationSetting() = spm.getStringValue(SHARED_PREF_LOCATION)
+
     fun setDarkModeSetting(darkMode: Int) {
         spm.setIntValue(SHARED_PREF_DARK_MODE, darkMode)
     }
@@ -40,6 +46,7 @@ class SharedPrefs @Inject constructor(
     )
 
     companion object {
+        const val SHARED_PREF_LOCATION = "SHARED_PREF_LOCATION"
         const val SHARED_PREF_DARK_MODE = "SHARED_PREF_DARK_MODE"
         const val SHARED_PREF_THEME = "SHARED_PREF_THEME"
 

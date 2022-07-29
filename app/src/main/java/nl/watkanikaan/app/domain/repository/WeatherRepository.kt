@@ -6,8 +6,7 @@ import nl.watkanikaan.app.domain.model.Result
 
 interface WeatherRepository {
     fun fetchWeather(
-        lat: Double?,
-        long: Double?,
+        location: String?,
         forceRefresh: Boolean? = false,
     ): Flow<Result<Weather?>>
 }

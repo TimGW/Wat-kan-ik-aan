@@ -2,6 +2,7 @@ package nl.watkanikaan.app.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import nl.watkanikaan.app.data.local.SharedPrefs
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.repository.WeatherRepository
@@ -11,18 +12,16 @@ import kotlin.math.round
 
 class FetchWeatherUseCase @Inject constructor(
     private val repository: WeatherRepository,
+    sharedPrefs: SharedPrefs,
 ) : UseCase<FetchWeatherUseCase.Params, Flow<@JvmSuppressWildcards Result<Weather?>>> {
+    private val location = sharedPrefs.getLocationSetting()
 
-    data class Params(
-        val lat: Double? = null,
-        val long: Double? = null,
-        val forceRefresh: Boolean? = null
-    )
+    data class Params(val forceRefresh: Boolean? = null)
 
     override fun execute(
         params: Params
     ): Flow<Result<Weather?>> = repository.fetchWeather(
-        params.lat, params.long, params.forceRefresh
+        location, params.forceRefresh
     ).map { response ->
         val weather = response.data ?: return@map response
 

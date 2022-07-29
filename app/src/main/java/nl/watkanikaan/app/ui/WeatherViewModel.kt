@@ -1,5 +1,6 @@
 package nl.watkanikaan.app.ui
 
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +16,14 @@ import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.usecase.CalcRecommendationUseCase
 import nl.watkanikaan.app.domain.usecase.FetchWeatherUseCase
+import nl.watkanikaan.app.domain.usecase.UpdateLocationUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val fetchWeatherUseCase: FetchWeatherUseCase,
     private val calcRecommendationUseCase: CalcRecommendationUseCase,
+    private val updateLocationUseCase: UpdateLocationUseCase,
 ) : ViewModel() {
 
     private val _weather = MutableStateFlow<Result<Weather?>>(Result.Loading(null))
@@ -75,5 +78,9 @@ class WeatherViewModel @Inject constructor(
 
     fun updateToolbarTitle(selectedDay: Weather.Day) = viewModelScope.launch {
         _toolbar.value = selectedDay.toText()
+    }
+
+    fun updateLocation(location: Location) {
+        updateLocationUseCase.execute(UpdateLocationUseCase.Params(location))
     }
 }

@@ -26,8 +26,7 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override fun fetchWeather(
-        lat: Double?,
-        long: Double?,
+        location: String?,
         forceRefresh: Boolean?,
     ) = object : NetworkBoundResource<WeatherEntity, Weather?>(errorHandler) {
         override suspend fun saveRemoteData(response: WeatherEntity) {
@@ -39,8 +38,8 @@ class WeatherRepositoryImpl @Inject constructor(
         }
 
         override suspend fun fetchFromRemote(): Response<WeatherEntity> {
-            val location = if (lat != null && long != null) "$lat,$long" else "Amsterdam"
-            return weatherService.getWeather(location = location)
+            val loc = location ?: "Amsterdam"
+            return weatherService.getWeather(location = loc)
         }
 
         override fun shouldFetch(

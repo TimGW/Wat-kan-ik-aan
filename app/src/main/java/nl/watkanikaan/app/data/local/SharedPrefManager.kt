@@ -12,7 +12,7 @@ class SharedPrefManager @Inject constructor(
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun getStringValue(key: String, default: String? = null) =
-        sharedPreferences.getString(key, default) ?: default
+        sharedPreferences.getString(key, default)
 
     fun setStringValue(key: String, value: String) {
         sharedPreferences.edit().putString(key, value).apply()

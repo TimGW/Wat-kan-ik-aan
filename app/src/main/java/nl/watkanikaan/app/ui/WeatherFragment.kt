@@ -1,6 +1,13 @@
 package nl.watkanikaan.app.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -8,6 +15,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +25,10 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
 import nl.watkanikaan.app.domain.model.Recommendation
@@ -31,11 +43,21 @@ class WeatherFragment : Fragment() {
     private val viewModel: WeatherViewModel by activityViewModels()
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var weatherAdapter: WeatherItemAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedForecast: Weather.Forecast? = null
     private var selectedDay: Weather.Day? = null
     private val refresh by lazy {
         throttleFirst(THROTTLE_LIMIT, lifecycleScope, viewModel::refresh) {
             binding.swiperefresh.isRefreshing = false
+        }
+    }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            getLocationUpdate()
+        } else {
+            showPermissionRationale { openSettings() }
         }
     }
 
@@ -49,6 +71,8 @@ class WeatherFragment : Fragment() {
                     activity?.finish()
                 }
             })
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
     override fun onCreateView(
@@ -87,6 +111,7 @@ class WeatherFragment : Fragment() {
 
         observeWeather()
         observeRecommendation()
+        getLocationUpdate()
     }
 
     override fun onResume() {
@@ -152,6 +177,55 @@ class WeatherFragment : Fragment() {
             }
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocationUpdate() {
+        if (checkPermissions()) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location == null) {
+                    view?.snackbar(message = getString(R.string.location_not_found))
+                } else {
+                    viewModel.updateLocation(location)
+                }
+            }
+        }
+    }
+
+    private fun showPermissionRationale(block: () -> Unit) {
+        binding.swiperefresh.isRefreshing = false
+        binding.root.snackbar(action = {
+            block.invoke()
+        })
+    }
+
+    private fun openSettings() {
+        startActivity(Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            addCategory(Intent.CATEGORY_DEFAULT)
+            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+        })
+    }
+
+    private fun checkPermissions(): Boolean {
+        when {
+            isPermissionGranted() -> return true
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+                showPermissionRationale {
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                }
+            }
+            else -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        return false
+    }
+
+    private fun isPermissionGranted() = ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
         const val THROTTLE_LIMIT = 60L * 1000L
