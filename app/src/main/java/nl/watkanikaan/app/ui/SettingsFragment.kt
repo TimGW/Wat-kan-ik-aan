@@ -73,7 +73,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
-        profileAgePref?.summary = sharedPrefs.getAge().toString()
+        profileAgePref?.summary = sharedPrefs.getAge()?.toString().or("-")
         profileAgePref?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val setting = (newValue as String)

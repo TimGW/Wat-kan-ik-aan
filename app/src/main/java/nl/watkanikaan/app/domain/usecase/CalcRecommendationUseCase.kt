@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import nl.watkanikaan.app.data.local.SharedPrefs
 import nl.watkanikaan.app.domain.model.DefaultDispatcher
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
@@ -16,26 +17,25 @@ import javax.inject.Inject
 
 class CalcRecommendationUseCase @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    private val sharedPrefs: SharedPrefs,
 ) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
 
     data class Params(
         val selectedDay: Weather.Day,
         val weather: Weather.Forecast,
-        val profile: Profile
     )
 
     override fun execute(
         params: Params
     ) = flow {
-        emit(createRecommendation(params.selectedDay, params.weather, params.profile))
+        emit(createRecommendation(params.selectedDay, params.weather))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
         day: Weather.Day,
         weather: Weather.Forecast,
-        profile: Profile,
     ): Recommendation {
-        val temp = profile.actuarialTemperature(weather.temperature)
+        val temp = sharedPrefs.getProfile().actuarialTemperature(weather.temperature)
         val isRainExpected = weather.isRainExpected()
 
         return Recommendation(

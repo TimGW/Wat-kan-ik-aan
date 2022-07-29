@@ -65,10 +65,9 @@ class WeatherViewModel @Inject constructor(
     private suspend fun executeRecommendation(
         day: Weather.Day,
         weather: Weather.Forecast,
-        profile: Profile = Profile(),
     ) {
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(day, weather, profile)
+            CalcRecommendationUseCase.Params(day, weather)
         ).collect { result ->
             _recommendation.value = result
         }

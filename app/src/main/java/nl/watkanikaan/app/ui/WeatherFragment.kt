@@ -31,6 +31,8 @@ class WeatherFragment : Fragment() {
     private val viewModel: WeatherViewModel by activityViewModels()
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var weatherAdapter: WeatherItemAdapter
+    private var selectedForecast: Weather.Forecast? = null
+    private var selectedDay: Weather.Day? = null
     private val refresh by lazy {
         throttleFirst(THROTTLE_LIMIT, lifecycleScope, viewModel::refresh) {
             binding.swiperefresh.isRefreshing = false
@@ -65,6 +67,8 @@ class WeatherFragment : Fragment() {
 
         binding.weatherRv.apply {
             weatherAdapter = WeatherItemAdapter { day, forecast ->
+                selectedDay = day
+                selectedForecast = forecast
                 viewModel.updateRecommendation(day, forecast)
             }
             adapter = weatherAdapter
@@ -83,6 +87,14 @@ class WeatherFragment : Fragment() {
 
         observeWeather()
         observeRecommendation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (selectedDay != null && selectedForecast != null) {
+            viewModel.updateRecommendation(selectedDay!!, selectedForecast!!)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
