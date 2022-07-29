@@ -23,9 +23,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var profileThermoceptionPref: ListPreference? = null
     private var profileGenderPref: ListPreference? = null
     private var profileAgePref: EditTextPreference? = null
+    private var themePref: ListPreference? = null
 
     @Inject
     lateinit var sharedPrefs: SharedPrefs
+
+    @Inject
+    lateinit var themeHelper: ThemeHelper
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
@@ -39,6 +43,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         profileAgePref = (findPreference("profile_age") as? EditTextPreference)
         darkModePref = (findPreference("dark_mode_key") as? ListPreference)
         rateAppPref = (findPreference("preferences_rate_app_key") as? Preference)
+        themePref = (findPreference("theme_key") as? ListPreference)
 
         profilePrefs()
         displayPrefs()
@@ -89,21 +94,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         darkModePref?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
-                val darkModeSetting =
-                    (newValue as String).toIntOrNull() ?: return@OnPreferenceChangeListener false
-                val nightMode = when (darkModeSetting) {
-                    0 -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                    1 -> AppCompatDelegate.MODE_NIGHT_NO
-                    2 -> AppCompatDelegate.MODE_NIGHT_YES
-                    else -> AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
-                }
-                AppCompatDelegate.setDefaultNightMode(nightMode)
-                sharedPrefs.setDarkModeSetting(darkModeSetting)
-                darkModePref?.summary =
-                    resources.getStringArray(R.array.night_mode_items)[darkModeSetting]
+                val value = (newValue as String).toIntOrNull() ?: return@OnPreferenceChangeListener false
+                AppCompatDelegate.setDefaultNightMode(themeHelper.getNightMode(value))
+                sharedPrefs.setDarkModeSetting(value)
+                darkModePref?.summary = resources.getStringArray(R.array.night_mode_items)[value]
                 true
             }
 
+        themePref?.summary = resources
+            .getStringArray(R.array.theme_items)[sharedPrefs.getThemeSetting()]
+
+        themePref?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                val themeSetting = (newValue as String).toIntOrNull() ?: return@OnPreferenceChangeListener false
+                sharedPrefs.setThemeSetting(themeSetting)
+                requireActivity().recreate()
+                true
+            }
     }
 
     private fun aboutPrefs() {

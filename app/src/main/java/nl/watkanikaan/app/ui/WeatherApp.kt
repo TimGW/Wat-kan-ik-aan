@@ -9,17 +9,11 @@ import javax.inject.Inject
 @HiltAndroidApp
 class WeatherApp : Application() {
     @Inject
-    lateinit var sharedPref: SharedPrefs
+    lateinit var themeHelper: ThemeHelper
 
     override fun onCreate() {
         super.onCreate()
 
-        val nightMode = when (sharedPref.getDarkModeSetting()) {
-            0 -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-            1 -> AppCompatDelegate.MODE_NIGHT_NO
-            2 -> AppCompatDelegate.MODE_NIGHT_YES
-            else -> AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
-        }
-        AppCompatDelegate.setDefaultNightMode(nightMode)
+        AppCompatDelegate.setDefaultNightMode(themeHelper.getNightMode())
     }
 }

@@ -7,6 +7,10 @@ import kotlinx.coroutines.flow.flowOn
 import nl.watkanikaan.app.domain.model.DefaultDispatcher
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
+import nl.watkanikaan.app.domain.model.Recommendation.Bottom
+import nl.watkanikaan.app.domain.model.Recommendation.Extra
+import nl.watkanikaan.app.domain.model.Recommendation.Jacket
+import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
 import javax.inject.Inject
 
@@ -15,7 +19,7 @@ class CalcRecommendationUseCase @Inject constructor(
 ) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
 
     data class Params(
-        val day: Weather.Day,
+        val selectedDay: Weather.Day,
         val weather: Weather.Forecast,
         val profile: Profile
     )
@@ -23,77 +27,52 @@ class CalcRecommendationUseCase @Inject constructor(
     override fun execute(
         params: Params
     ) = flow {
-        val profile = params.profile
-        val day = params.day
-        val expectation = params.weather
-        val isRaining = expectation.isRainExpected()
-
-        val weather = params.weather
-        val temp = profile.actuarialTemperature(weather.temperature)
-
-        val recommendation = createRecommendation(
-            day,
-            temp,
-            weather.dewPoint,
-            expectation.chanceOfSun,
-            isRaining,
-            weather.windForce
-        )
-
-        emit(recommendation)
+        emit(createRecommendation(params.selectedDay, params.weather, params.profile))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
         day: Weather.Day,
-        temp: Double,
-        dewPoint: Int?,
-        chanceOfSun: Int,
-        isRainExpected: Boolean,
-        windForce: Int,
-    ) = Recommendation(
-        day,
-        determineJacket(temp, dewPoint),
-        determineTop(temp),
-        determineBottom(temp, isRainExpected, dewPoint),
-        determineExtras(temp, chanceOfSun, isRainExpected, windForce, dewPoint)
-    )
+        weather: Weather.Forecast,
+        profile: Profile,
+    ): Recommendation {
+        val temp = profile.actuarialTemperature(weather.temperature)
+        val isRainExpected = weather.isRainExpected()
+
+        return Recommendation(
+            day,
+            determineJacket(temp, weather.dewPoint),
+            determineTop(temp),
+            determineBottom(temp, isRainExpected, weather.dewPoint),
+            determineExtras(temp, weather.chanceOfSun, isRainExpected, weather.windForce, weather.dewPoint)
+        )
+    }
 
     private fun determineJacket(
         temp: Double,
         dewPoint: Int? = null,
-    ) = when {
-        temp >= 20f -> Recommendation.Jacket.NONE
-        temp >= 15f -> {
-            if (dewPoint != null && dewPoint >= 15) {
-                Recommendation.Jacket.NONE
-            } else {
-                Recommendation.Jacket.SUMMER
-            }
-        }
-        temp >= 10f -> Recommendation.Jacket.NORMAL
-        else -> Recommendation.Jacket.WINTER
+    ): Jacket? = when {
+        temp >= 20.0 -> null
+        temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) null else Jacket.SUMMER
+        temp >= 10.0 -> Jacket.NORMAL
+        else -> Jacket.WINTER
     }
 
     private fun determineTop(
         temp: Double,
-    ) = when {
-        temp >= 15.0 -> Recommendation.Top.T_SHIRT
-        temp >= 10.0 -> Recommendation.Top.VEST
-        else -> Recommendation.Top.SWEATER
+    ): Top = when {
+        temp >= 15.0 -> Top.T_SHIRT
+        temp >= 10.0 -> Top.VEST
+        else -> Top.SWEATER
     }
 
     private fun determineBottom(
         temp: Double,
         isRainExpected: Boolean,
         dewPoint: Int?,
-    ) = when {
-        temp >= 20.0 && !isRainExpected -> Recommendation.Bottom.SHORTS
-        temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) {
-            Recommendation.Bottom.SHORTS
-        } else {
-            Recommendation.Bottom.LONG
-        }
-        else -> Recommendation.Bottom.LONG
+    ): Bottom = when {
+        temp >= 20.0 && !isRainExpected -> Bottom.SHORTS
+        temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) Bottom.SHORTS else Bottom.LONG
+        else -> Bottom.LONG
     }
 
     private fun determineExtras(
@@ -102,19 +81,13 @@ class CalcRecommendationUseCase @Inject constructor(
         isRainExpected: Boolean,
         windForce: Int,
         dewPoint: Int?,
-    ): Set<Recommendation.Extra> {
-        val result = mutableSetOf<Recommendation.Extra>()
+    ): Set<Extra> {
+        val result = mutableSetOf<Extra>()
 
-        dewPoint?.let { if (it >= 20) result.add(Recommendation.Extra.MUGGY) }
-        if (chanceOfSun >= 70) result.add(Recommendation.Extra.SUNNY)
-        if (temp <= 5.0) result.add(Recommendation.Extra.FREEZING)
-        if (isRainExpected) {
-            if (windForce >= 5) {
-                result.add(Recommendation.Extra.RAIN_WINDY)
-            } else {
-                result.add(Recommendation.Extra.RAIN)
-            }
-        }
+        dewPoint?.let { if (it >= 20) result.add(Extra.MUGGY) }
+        if (chanceOfSun >= 70) result.add(Extra.SUNNY)
+        if (temp <= 5.0) result.add(Extra.FREEZING)
+        if (isRainExpected) if (windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)
 
         return result
     }

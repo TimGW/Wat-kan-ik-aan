@@ -32,6 +32,7 @@
     <string name="preferences_display_header">Weergave</string>
     <string name="preferences_profile_header">Profiel</string>
     <string name="preferences_about_header">Over</string>
+    <string name="preferences_display_theme">Thema</string>
 
     <string name="preferences_profile_thermoception">Thermoceptie</string>
     <string-array name="thermoception_items">
@@ -48,7 +49,19 @@
     <string name="thermoception_label_normal">Normaal</string>
     <string name="thermoception_label_warm">Warm</string>
     <string name="preferences_rate_app">Beoordeel deze app</string>
-
+    <string-array name="theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="theme_items">
+        <item>@string/theme_label_default</item>
+        <item>@string/theme_label_red</item>
+        <item>@string/theme_label_green</item>
+    </string-array>
+    <string name="theme_label_default">Blauw</string>
+    <string name="theme_label_red">Rood</string>
+    <string name="theme_label_green">Groen</string>
     <string name="preferences_profile_gender">Geslacht</string>
     <string-array name="gender_items">
         <item>@string/gender_label_other</item>

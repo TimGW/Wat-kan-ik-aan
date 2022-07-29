@@ -14,6 +14,7 @@ import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.ActivityMainBinding
 import nl.watkanikaan.app.domain.model.Weather
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -21,10 +22,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: WeatherViewModel by viewModels()
 
+    @Inject
+    lateinit var themeHelper: ThemeHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setTheme(themeHelper.getAppTheme())
+
         setSupportActionBar(binding.appbar.toolbar)
         setToolbarTitle(R.string.now)
 

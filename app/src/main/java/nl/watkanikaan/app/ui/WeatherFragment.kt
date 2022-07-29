@@ -125,7 +125,14 @@ class WeatherFragment : Fragment() {
     private fun updateRecommendationUI(recommendation: Recommendation) {
         with(recommendation) {
             viewModel.updateToolbarTitle(recommendation.selectedDay)
-            binding.jacket.text = getString(jacket.type)
+
+            binding.jacket.visibility = if (jacket?.type == null) {
+                View.GONE
+            } else {
+                binding.jacket.text = getString(jacket.type)
+                View.VISIBLE
+            }
+
             binding.top.text = getString(top.type)
             binding.bottom.text = getString(bottom.type)
             binding.extra.text = extras.joinToString("en, ") { extra ->

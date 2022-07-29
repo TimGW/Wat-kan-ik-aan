@@ -54,7 +54,7 @@ class WeatherJsonAdapter {
             Weather.Day.TOMORROW, WeatherEntity.Forecast(
                 dewPoint = null,
                 weatherIcon = weatherIconTomorrow.or(),
-                temperature = mapTempExpectation(sunUpAt, minTempTomorrow, maxTempTomorrow),
+                temperature = maxTempTomorrow.toDoubleOr(),
                 windForce = windForceTomorrow.toIntOr(),
                 windSpeed = windSpeedMsTomorrow.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationTomorrow.toIntOr(),
@@ -65,7 +65,7 @@ class WeatherJsonAdapter {
             Weather.Day.DAY_AFTER_TOMORROW, WeatherEntity.Forecast(
                 dewPoint = null,
                 weatherIcon = weatherIconDayAfterTomorrow.or(),
-                temperature = mapTempExpectation(sunUpAt, minTempDayAfterTomorrow, maxTempDayAfterTomorrow),
+                temperature = maxTempDayAfterTomorrow.toDoubleOr(),
                 windForce = windForceDayAfterTomorrow.toIntOr(),
                 windSpeed = windSpeedMsDayAfterTomorrow.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationDayAfterTomorrow.toIntOr(),

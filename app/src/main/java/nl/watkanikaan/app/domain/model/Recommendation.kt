@@ -4,13 +4,13 @@ import nl.watkanikaan.app.R
 
 data class Recommendation(
     val selectedDay: Weather.Day = Weather.Day.NOW,
-    val jacket: Jacket = Jacket.NORMAL,
+    val jacket: Jacket? = Jacket.NORMAL,
     val top: Top = Top.T_SHIRT,
     val bottom: Bottom = Bottom.LONG,
     val extras: Set<Extra> = emptySet(),
 ) {
+    // todo remove strings from enums
     enum class Jacket(val type: Int) {
-        NONE(R.string.none),
         WINTER(R.string.jacket_cold),
         NORMAL(R.string.jacket_normal),
         SUMMER(R.string.jacket_warm),
