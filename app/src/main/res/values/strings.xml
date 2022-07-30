@@ -45,9 +45,9 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    <string name="thermoception_label_cold">Koud</string>
+    <string name="thermoception_label_cold">Ik heb het snel koud</string>
     <string name="thermoception_label_normal">Normaal</string>
-    <string name="thermoception_label_warm">Warm</string>
+    <string name="thermoception_label_warm">Ik heb het snel warm</string>
     <string name="preferences_rate_app">Beoordeel deze app</string>
     <string-array name="theme_values">
         <item>0</item>
@@ -96,4 +96,6 @@
     <string name="location">Locatie: %1$s</string>
     <string name="preferences_profile_age">Leeftijd</string>
     <string name="location_not_found">Geen locatie gevonden</string>
+    <string name="location_permissions">Geen locatie permissies</string>
+    <string name="location_settings">Instellingen</string>
 </resources>

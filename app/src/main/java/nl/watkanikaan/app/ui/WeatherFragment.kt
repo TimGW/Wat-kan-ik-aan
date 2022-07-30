@@ -192,10 +192,10 @@ class WeatherFragment : Fragment() {
     }
 
     private fun showPermissionRationale(block: () -> Unit) {
-        binding.swiperefresh.isRefreshing = false
-        binding.root.snackbar(action = {
-            block.invoke()
-        })
+        binding.root.snackbar(
+            message = getString(R.string.location_permissions),
+            actionMessage = getString(R.string.location_settings),
+            action = { block.invoke() })
     }
 
     private fun openSettings() {
