@@ -1,7 +1,9 @@
 package nl.watkanikaan.app.ui
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +39,14 @@ fun throttleFirst(
         }
         finally.invoke()
     }
+}
+
+fun Context.toast(message: String) {
+    Toast.makeText(
+        this,
+        message,
+        Toast.LENGTH_SHORT
+    ).show()
 }
 
 fun View.snackbar(

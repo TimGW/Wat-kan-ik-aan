@@ -101,4 +101,7 @@
     <string name="location_not_found">Geen locatie gevonden</string>
     <string name="location_permissions">Geen locatie permissies</string>
     <string name="location_settings">Instellingen</string>
+    <string name="review_flow_done">Bedankt dat je ons laat weten wat je ervan vindt!</string>
+    <string name="error_generic">Er is iets fout gegaan</string>
+
 </resources>

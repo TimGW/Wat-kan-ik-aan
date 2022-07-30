@@ -10,6 +10,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.data.local.SharedPrefs
@@ -115,19 +116,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun aboutPrefs() {
         rateAppPref?.setOnPreferenceClickListener {
-//            val manager = ReviewManagerFactory.create(requireActivity())
-//
-//            manager.requestReviewFlow().addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    val reviewInfo = task.result
-//                    val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
-//                    flow.addOnCompleteListener { _ ->
-//                        requireContext().toast(getString(R.string.review_flow_done))
-//                    }
-//                } else {
-//                    requireContext().toast(getString(R.string.error_generic))
-//                }
-//            }
+            val manager = ReviewManagerFactory.create(requireActivity())
+
+            manager.requestReviewFlow().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val reviewInfo = task.result
+                    val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+                        requireContext().toast(getString(R.string.review_flow_done))
+                    }
+                } else {
+                    requireContext().toast(getString(R.string.error_generic))
+                }
+            }
             true
         }
     }
