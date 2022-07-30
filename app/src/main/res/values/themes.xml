@@ -53,6 +53,7 @@
         <!--Component styles-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
+        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
     </style>
 
     <style name="Base.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -91,6 +92,14 @@
         <item name="colorSecondary">@color/color_primary_green</item>
         <item name="colorSecondaryVariant">@color/color_primary_variant_green</item>
         <item name="iconTint">@color/color_primary_green</item>
+    </style>
+
+    <style name="AppTheme.Yellow" parent="MyTheme.DayNight">
+        <item name="colorPrimary">@color/color_primary_yellow</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant_yellow</item>
+        <item name="colorSecondary">@color/color_primary_yellow</item>
+        <item name="colorSecondaryVariant">@color/color_primary_variant_yellow</item>
+        <item name="iconTint">@color/color_primary_yellow</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.App.SelectedCornerRadius" parent="">
