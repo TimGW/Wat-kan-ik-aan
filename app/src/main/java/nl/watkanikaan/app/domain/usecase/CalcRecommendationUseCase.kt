@@ -36,14 +36,20 @@ class CalcRecommendationUseCase @Inject constructor(
         weather: Weather.Forecast,
     ): Recommendation {
         val temp = sharedPrefs.getProfile().actuarialTemperature(weather.temperature)
-        val isRainExpected = weather.isRainExpected()
+        val isRainExpected = weather.isPrecipitationExpected()
 
         return Recommendation(
             day,
             determineJacket(temp, weather.dewPoint),
             determineTop(temp),
             determineBottom(temp, isRainExpected, weather.dewPoint),
-            determineExtras(temp, weather.chanceOfSun, isRainExpected, weather.windForce, weather.dewPoint)
+            determineExtras(
+                temp,
+                weather.chanceOfSun,
+                isRainExpected,
+                weather.windForce,
+                weather.dewPoint
+            )
         )
     }
 
@@ -70,7 +76,8 @@ class CalcRecommendationUseCase @Inject constructor(
         isRainExpected: Boolean,
         dewPoint: Int?,
     ): Bottom = when {
-        temp >= 20.0 && !isRainExpected -> Bottom.SHORTS
+        isRainExpected -> Bottom.LONG
+        temp >= 20.0 -> Bottom.SHORTS
         temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) Bottom.SHORTS else Bottom.LONG
         else -> Bottom.LONG
     }
@@ -106,5 +113,8 @@ class CalcRecommendationUseCase @Inject constructor(
         return result
     }
 
-    private fun Weather.Forecast.isRainExpected() = chanceOfPrecipitation >= 40
+    private fun Weather.Forecast.isPrecipitationExpected(): Boolean {
+        return chanceOfPrecipitation >= 40 || weatherIcon.contains("regen") ||
+                weatherIcon == "buien" || weatherIcon == "hagel" || weatherIcon == "sneeuw"
+    }
 }
