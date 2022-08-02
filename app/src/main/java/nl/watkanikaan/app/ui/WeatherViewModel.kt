@@ -26,6 +26,7 @@ class WeatherViewModel @Inject constructor(
     private val updateLocationUseCase: UpdateLocationUseCase,
 ) : ViewModel() {
 
+    // todo create weather UI model to put the .toDays in
     private val _weather = MutableStateFlow<Result<Weather?>>(Result.Loading(null))
     val weather: StateFlow<Result<Weather?>> = _weather.asStateFlow()
 
@@ -70,9 +71,9 @@ class WeatherViewModel @Inject constructor(
         weather: Weather.Forecast,
     ) {
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(day, weather)
+            CalcRecommendationUseCase.Params(weather)
         ).collect { result ->
-            _recommendation.value = result
+            _recommendation.value = result.copy(selectedDay = day)
         }
     }
 

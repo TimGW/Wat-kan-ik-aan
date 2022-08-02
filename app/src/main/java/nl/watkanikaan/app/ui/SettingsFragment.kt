@@ -13,7 +13,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
-import nl.watkanikaan.app.data.local.SharedPrefs
+import nl.watkanikaan.app.data.local.SharedPref
 import javax.inject.Inject
 
 
@@ -27,7 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var themePref: ListPreference? = null
 
     @Inject
-    lateinit var sharedPrefs: SharedPrefs
+    lateinit var sharedPrefs: SharedPref
 
     @Inject
     lateinit var themeHelper: ThemeHelper

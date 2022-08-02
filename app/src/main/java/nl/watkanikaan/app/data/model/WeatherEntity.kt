@@ -36,7 +36,7 @@ data class WeatherEntity(
                     Forecast(
                         it.value.dewPoint,
                         it.value.weatherIcon,
-                        it.value.temperature,
+                        it.value.windChillTemp,
                         it.value.windForce,
                         it.value.windSpeed,
                         it.value.chanceOfPrecipitation,

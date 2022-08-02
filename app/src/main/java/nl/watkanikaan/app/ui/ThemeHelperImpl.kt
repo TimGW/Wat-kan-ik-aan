@@ -2,14 +2,15 @@ package nl.watkanikaan.app.ui
 
 import androidx.appcompat.app.AppCompatDelegate
 import nl.watkanikaan.app.R
-import nl.watkanikaan.app.data.local.SharedPrefs
+import nl.watkanikaan.app.data.local.DefaultSharedPrefs
+import nl.watkanikaan.app.data.local.SharedPref
 import javax.inject.Inject
 
 class ThemeHelperImpl @Inject constructor(
-    private val sharedPrefs: SharedPrefs
+    private val defaultSharedPrefs: SharedPref
 ) : ThemeHelper {
 
-    override fun getAppTheme() = when (sharedPrefs.getThemeSetting()) {
+    override fun getAppTheme() = when (defaultSharedPrefs.getThemeSetting()) {
         0 -> R.style.AppTheme_Yellow
         1 -> R.style.AppTheme_Blue
         2 -> R.style.AppTheme_Red
@@ -19,7 +20,7 @@ class ThemeHelperImpl @Inject constructor(
 
     override fun getNightMode(darkModeSetting: Int): Int {
         val result = if (darkModeSetting == SAVED_NIGHT_VALUE) {
-            sharedPrefs.getDarkModeSetting()
+            defaultSharedPrefs.getDarkModeSetting()
         } else {
             darkModeSetting
         }

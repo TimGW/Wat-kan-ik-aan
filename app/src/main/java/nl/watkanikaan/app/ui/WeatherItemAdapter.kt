@@ -14,34 +14,16 @@ class WeatherItemAdapter(
     private val weatherData: MutableMap<Weather.Day, Weather.Forecast> = mutableMapOf(),
     private val listener: (Weather.Day, Weather.Forecast) -> Unit
 ) : RecyclerView.Adapter<WeatherItemAdapter.ViewHolder>() {
+    private var selectedPos = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         WeatherItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val context = holder.itemView.context
         val day = Weather.Day.values()[position]
         val weather = weatherData[day] ?: return
-
-        val resourceId = context.resources.getIdentifier(
-            weather.weatherIcon, "drawable",
-            context.packageName
-        )
-        val drawable = try {
-            ResourcesCompat.getDrawable(context.resources, resourceId, null)
-        } catch (e: Resources.NotFoundException) {
-            ResourcesCompat.getDrawable(context.resources, R.drawable.refresh, null)
-        }
-
-        holder.binding.icon.setImageDrawable(drawable)
-        holder.binding.overline.text = context.getText(day.toText(true))
-
-        val tempString = weather.temperature.roundToInt().toString()
-        holder.binding.underline.text = context.getString(R.string.temperature, tempString)
-        holder.binding.card.setOnClickListener {
-            listener(day, weather) // todo show current selected
-        }
+        holder.bind(day, weather)
     }
 
     override fun getItemCount() = weatherData.size
@@ -52,5 +34,42 @@ class WeatherItemAdapter(
         notifyItemRangeChanged(0, weatherItems.size)
     }
 
-    class ViewHolder(val binding: WeatherItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(
+        private val binding: WeatherItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(day: Weather.Day, forecast: Weather.Forecast) {
+            val context = binding.root.context
+            val drawable = try {
+                val resourceId = context.resources.getIdentifier(
+                    forecast.weatherIcon,
+                    "drawable",
+                    context.packageName
+                )
+                ResourcesCompat.getDrawable(context.resources, resourceId, null)
+            } catch (e: Resources.NotFoundException) {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.refresh, null)
+            }
+
+            binding.icon.setImageDrawable(drawable)
+            binding.overline.text = context.getText(day.toText(true))
+
+            val tempString = forecast.windChillTemp.roundToInt().toString()
+            binding.underline.text = context.getString(R.string.temperature, tempString)
+            binding.card.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+
+                notifyItemChanged(selectedPos)
+                selectedPos = adapterPosition
+                notifyItemChanged(selectedPos)
+
+                listener(day, forecast)
+            }
+            val colorActive = context.getThemeColor(com.google.android.material.R.attr.colorPrimary)
+            val colorInactive = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
+            binding.card.setCardBackgroundColor(
+                if (selectedPos == adapterPosition) colorActive else colorInactive
+            )
+        }
+    }
 }

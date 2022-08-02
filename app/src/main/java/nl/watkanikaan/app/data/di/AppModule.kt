@@ -10,6 +10,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nl.watkanikaan.app.data.local.AppDatabase
+import nl.watkanikaan.app.data.local.SharedPref
+import nl.watkanikaan.app.data.local.DefaultSharedPrefs
 import nl.watkanikaan.app.data.local.TypeConverterForecast
 import nl.watkanikaan.app.data.remote.WeatherJsonAdapter
 import nl.watkanikaan.app.data.repository.ErrorHandlerImpl
@@ -30,6 +32,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindErrorHandler(errorHandlerImpl: ErrorHandlerImpl): ErrorHandler
+
+    @Binds
+    abstract fun bindSharedPrefs(defaultSharedPrefs: DefaultSharedPrefs): SharedPref
 
     companion object {
 

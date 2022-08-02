@@ -27,7 +27,7 @@ data class Weather(
     data class Forecast(
         val dewPoint: Int?,
         val weatherIcon: String,
-        val temperature: Double,
+        val windChillTemp: Double,
         val windForce: Int,
         val windSpeed: Double,
         val chanceOfPrecipitation: Int,

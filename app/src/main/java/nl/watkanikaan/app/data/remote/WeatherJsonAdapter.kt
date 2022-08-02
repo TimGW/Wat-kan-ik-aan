@@ -74,7 +74,7 @@ class WeatherJsonAdapter {
         )
     }
 
-    private fun mapTempExpectation(
+    fun mapTempExpectation(
         sunUpAt: String?,
         min: String?,
         max: String?

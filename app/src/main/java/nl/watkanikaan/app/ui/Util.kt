@@ -1,9 +1,11 @@
 package nl.watkanikaan.app.ui
 
 import android.content.Context
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.AttrRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -72,4 +74,10 @@ const val INVALID_DOUBLE = -1.0
 
 fun <T, R> withNullable(receiver: T?, block: T.() -> R): R? {
     return if(receiver == null) null else receiver.block()
+}
+
+fun Context.getThemeColor(@AttrRes res: Int): Int {
+    val value = TypedValue()
+    theme.resolveAttribute(res, value, true)
+    return value.data
 }

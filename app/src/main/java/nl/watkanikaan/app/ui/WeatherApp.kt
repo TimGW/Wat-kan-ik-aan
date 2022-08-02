@@ -3,7 +3,6 @@ package nl.watkanikaan.app.ui
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.HiltAndroidApp
-import nl.watkanikaan.app.data.local.SharedPrefs
 import javax.inject.Inject
 
 @HiltAndroidApp

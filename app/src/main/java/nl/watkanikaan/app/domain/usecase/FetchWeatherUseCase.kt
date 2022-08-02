@@ -2,7 +2,7 @@ package nl.watkanikaan.app.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import nl.watkanikaan.app.data.local.SharedPrefs
+import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.repository.WeatherRepository
@@ -12,9 +12,9 @@ import kotlin.math.round
 
 class FetchWeatherUseCase @Inject constructor(
     private val repository: WeatherRepository,
-    sharedPrefs: SharedPrefs,
+    defaultSharedPrefs: SharedPref,
 ) : UseCase<FetchWeatherUseCase.Params, Flow<@JvmSuppressWildcards Result<Weather?>>> {
-    private val location = sharedPrefs.getLocationSetting()
+    private val location = defaultSharedPrefs.getLocationSetting()
 
     data class Params(val forceRefresh: Boolean? = null)
 
@@ -28,7 +28,7 @@ class FetchWeatherUseCase @Inject constructor(
         // convert temperature to windchill temperature
         val updatedResponse = weather.copy(forecast = weather.forecast.mapValues {
             val entry = it.value
-            entry.copy(temperature = windChill(entry.temperature, entry.windSpeed))
+            entry.copy(windChillTemp = windChill(entry.windChillTemp, entry.windSpeed))
         })
 
         return@map response.map(updatedResponse)

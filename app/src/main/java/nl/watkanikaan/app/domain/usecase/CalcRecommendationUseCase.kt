@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import nl.watkanikaan.app.data.local.SharedPrefs
+import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.domain.model.DefaultDispatcher
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
@@ -13,52 +13,41 @@ import nl.watkanikaan.app.domain.model.Recommendation.Extra
 import nl.watkanikaan.app.domain.model.Recommendation.Jacket
 import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
+import java.time.LocalDate
 import javax.inject.Inject
 
 class CalcRecommendationUseCase @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-    private val sharedPrefs: SharedPrefs,
+    private val sharedPrefs: SharedPref,
 ) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
 
-    data class Params(
-        val selectedDay: Weather.Day,
-        val weather: Weather.Forecast,
-    )
+    data class Params(val forecast: Weather.Forecast)
 
     override fun execute(
         params: Params
     ) = flow {
-        emit(createRecommendation(params.selectedDay, params.weather))
+        emit(createRecommendation(params.forecast))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
-        day: Weather.Day,
-        weather: Weather.Forecast,
+        forecast: Weather.Forecast,
     ): Recommendation {
-        val temp = sharedPrefs.getProfile().actuarialTemperature(weather.temperature)
-        val isRainExpected = weather.isPrecipitationExpected()
+        val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast)
 
         return Recommendation(
-            day,
-            determineJacket(temp, weather.dewPoint),
-            determineTop(temp),
-            determineBottom(temp, isRainExpected, weather.dewPoint),
-            determineExtras(
-                temp,
-                weather.chanceOfSun,
-                isRainExpected,
-                weather.windForce,
-                weather.dewPoint
-            )
+            jacket = determineJacket(temp, forecast),
+            top = determineTop(temp),
+            bottom = determineBottom(temp, forecast),
+            extras = determineExtras(temp, forecast)
         )
     }
 
     private fun determineJacket(
         temp: Double,
-        dewPoint: Int? = null,
+        forecast: Weather.Forecast,
     ): Jacket? = when {
         temp >= 20.0 -> null
-        temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) null else Jacket.SUMMER
+        temp >= 15.0 -> if (forecast.dewPoint.isMuggy()) null else Jacket.SUMMER
         temp >= 10.0 -> Jacket.NORMAL
         else -> Jacket.WINTER
     }
@@ -73,48 +62,62 @@ class CalcRecommendationUseCase @Inject constructor(
 
     private fun determineBottom(
         temp: Double,
-        isRainExpected: Boolean,
-        dewPoint: Int?,
+        forecast: Weather.Forecast,
     ): Bottom = when {
-        isRainExpected -> Bottom.LONG
+        forecast.isPrecipitationExpected() -> Bottom.LONG
         temp >= 20.0 -> Bottom.SHORTS
-        temp >= 15.0 -> if (dewPoint != null && dewPoint >= 15) Bottom.SHORTS else Bottom.LONG
+        temp >= 15.0 -> if (forecast.dewPoint.isMuggy()) Bottom.SHORTS else Bottom.LONG
         else -> Bottom.LONG
     }
 
     private fun determineExtras(
         temp: Double,
-        chanceOfSun: Int,
-        isRainExpected: Boolean,
-        windForce: Int,
-        dewPoint: Int?,
+        forecast: Weather.Forecast,
     ): Set<Extra> {
         val result = mutableSetOf<Extra>()
 
-        dewPoint?.let { if (it >= 20) result.add(Extra.MUGGY) }
-        if (chanceOfSun >= 70) result.add(Extra.SUNNY)
+        if (forecast.dewPoint.isMuggy()) result.add(Extra.MUGGY)
+        if (forecast.isSunny()) result.add(Extra.SUNNY)
         if (temp <= 5.0) result.add(Extra.FREEZING)
-        if (isRainExpected) if (windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)
-
-        return result
-    }
-
-    private fun Profile.actuarialTemperature(
-        temperature: Double
-    ): Double {
-        var result = when (thermoception) {
-            Profile.Thermoception.Cold -> temperature - 2.0
-            Profile.Thermoception.Normal -> temperature
-            Profile.Thermoception.Warm -> temperature + 2.0
+        if (forecast.isPrecipitationExpected()) {
+            if (forecast.windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)
         }
-        if (age >= 70) result -= 1.0
-        if (gender is Profile.Gender.Woman) result -= 1.0
 
         return result
-    }
-
-    private fun Weather.Forecast.isPrecipitationExpected(): Boolean {
-        return chanceOfPrecipitation >= 40 || weatherIcon.contains("regen") ||
-                weatherIcon == "buien" || weatherIcon == "hagel" || weatherIcon == "sneeuw"
     }
 }
+
+@Suppress("UNUSED_EXPRESSION")
+fun actuarialTemperature(
+    profile: Profile,
+    forecast: Weather.Forecast
+): Double {
+    var addition = 0.0
+
+    when (profile.thermoception) {
+        Profile.Thermoception.Cold -> addition -= 2.5
+        Profile.Thermoception.Normal -> addition
+        Profile.Thermoception.Warm -> addition += 2.5
+    }
+    when (profile.movement) {
+        Profile.Movement.Rest -> addition += 0.0
+        Profile.Movement.Light -> addition += 2.0
+        Profile.Movement.Heavy -> addition += 4.0
+    }
+    if (profile.age >= 70) addition -= 2.0
+    if (profile.gender is Profile.Gender.Female) addition -= 2.5
+    if (forecast.isSunny()) addition += 5.0
+
+    return forecast.windChillTemp + addition.coerceIn(-7.0, 7.0)
+}
+
+fun Weather.Forecast.isSunny() = chanceOfSun >= 65 || weatherIcon == "zonnig"
+
+fun Int?.isMuggy() = this != null && this >= 20 && LocalDate.now().isWarmMonth()
+
+fun Weather.Forecast.isPrecipitationExpected(): Boolean {
+    return chanceOfPrecipitation >= 40 || weatherIcon.contains("regen") ||
+            weatherIcon == "buien" || weatherIcon == "hagel" || weatherIcon == "sneeuw"
+}
+
+fun LocalDate.isWarmMonth() = monthValue in 5..9
