@@ -22,7 +22,8 @@ import java.time.LocalDate
 
 class CalcRecommendationUseCaseTest {
     private val sharedPrefs: SharedPref = mock()
-    private val anyForecast = Weather.Forecast(null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I)
+    private val anyForecast =
+        Weather.Forecast(null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I, ANY_I, ANY_I)
     private val setup: (CoroutineDispatcher) -> CalcRecommendationUseCase = {
         `when`(sharedPrefs.getProfile()).thenReturn(Profile())
         CalcRecommendationUseCase(it, sharedPrefs)
@@ -171,7 +172,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isSunny_showSunnyMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfSun = 100)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast)
+        val params = CalcRecommendationUseCase.Params(Weather.Day.DAY_AFTER_TOMORROW, forecast)
 
         val actual = it.execute(params).first()
 
@@ -215,9 +216,9 @@ class CalcRecommendationUseCaseTest {
             dewPoint = 20,
             chanceOfSun = 100,
             chanceOfPrecipitation = 100,
-            windForce = 4
+            windForce = 4,
         )
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast)
+        val params = CalcRecommendationUseCase.Params(Weather.Day.DAY_AFTER_TOMORROW, forecast)
 
         val actual = it.execute(params).first()
 
@@ -238,25 +239,37 @@ class CalcRecommendationUseCaseTest {
         val profile = Profile(Profile.Thermoception.Normal, Profile.Gender.Male, 30)
         val baselineTemp = 20.0
 
-        assertEquals(baselineTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            baselineTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature coldMale30 minus2`() {
         val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Male, 30)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2
+        val expectedTemp = baselineTemp - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature warmMale30 plus2`() {
         val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Male, 30)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2
+        val expectedTemp = baselineTemp + 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
@@ -265,25 +278,37 @@ class CalcRecommendationUseCaseTest {
         val baselineTemp = 20.0
         val expectedTemp = baselineTemp - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature coldFemale30 minus4,5`() {
         val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Female, 30)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2 - 2.5
+        val expectedTemp = baselineTemp - 2.5 - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature warmFemale30 plus4,5`() {
         val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Female, 30)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2 - 2.5
+        val expectedTemp = baselineTemp + 2.5 - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
@@ -292,25 +317,37 @@ class CalcRecommendationUseCaseTest {
         val baselineTemp = 20.0
         val expectedTemp = baselineTemp - 2
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature coldMale100 minus4`() {
         val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Male, 100)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2 - 2
+        val expectedTemp = baselineTemp - 2 - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature warmMale100 noDiff`() {
         val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Male, 100)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2 - 2
+        val expectedTemp = baselineTemp + 2.5 - 2
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
@@ -319,25 +356,37 @@ class CalcRecommendationUseCaseTest {
         val baselineTemp = 20.0
         val expectedTemp = baselineTemp - 2.5 - 2
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature coldFemale100 minus6,5`() {
         val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Female, 100)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2 - 2.5 - 2
+        val expectedTemp = baselineTemp - 2 - 2.5 - 2.5
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test
     fun `testActuarialTemperature warmFemale100 plus2,5`() {
         val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Female, 100)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2 - 2.5 - 2
+        val expectedTemp = baselineTemp + 2.5 - 2.5 - 2
 
-        assertEquals(expectedTemp, profile.actuarialTemperature(baselineTemp), 0.01)
+        assertEquals(
+            expectedTemp,
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            0.01
+        )
     }
 
     @Test

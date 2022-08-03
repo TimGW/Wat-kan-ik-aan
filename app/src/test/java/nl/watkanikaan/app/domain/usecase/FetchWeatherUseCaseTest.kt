@@ -30,7 +30,9 @@ class FetchWeatherUseCaseTest {
             0,
             10.0,
             0,
-            0
+            0,
+            5,
+            21
         )
     )
 

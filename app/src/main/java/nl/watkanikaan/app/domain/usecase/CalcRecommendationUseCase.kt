@@ -82,18 +82,16 @@ class CalcRecommendationUseCase @Inject constructor(
         forecast: Weather.Forecast,
     ): Set<Extra> {
         val result = mutableSetOf<Extra>()
-        val now = LocalTime.now().hour
+        val isSunUp = LocalTime.now().hour in forecast.sunUp..forecast.sunUnder
         val today = day == Weather.Day.NOW || day == Weather.Day.TODAY
 
         if (forecast.dewPoint.isMuggy()) result.add(Extra.MUGGY)
 
-        if (forecast.isSunny()) {
-            if (today) {
-                if (now in forecast.sunUp..forecast.sunUnder) result.add(Extra.SUNNY)
-            } else {
-                result.add(Extra.SUNNY)
-            }
+        when {
+            today && forecast.isSunny() -> if (isSunUp) result.add(Extra.SUNNY)
+            forecast.isSunny() -> result.add(Extra.SUNNY)
         }
+
         if (temp <= 5.0) result.add(Extra.FREEZING)
         if (forecast.isPrecipitationExpected()) {
             if (forecast.windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)
