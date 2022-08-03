@@ -49,22 +49,40 @@
     <string name="thermoception_label_normal">Normaal</string>
     <string name="thermoception_label_warm">Ik heb het snel warm</string>
     <string name="preferences_rate_app">Beoordeel deze app</string>
-    <string-array name="theme_values">
+
+    <string-array name="legacy_theme_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
-    <string-array name="theme_items">
-        <item>@string/theme_label_default</item>
+    <string-array name="legacy_theme_items">
+        <item>@string/theme_label_yellow</item>
         <item>@string/theme_label_blue</item>
         <item>@string/theme_label_red</item>
         <item>@string/theme_label_green</item>
     </string-array>
-    <string name="theme_label_default">Geel</string>
+
+    <string-array name="theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="theme_items">
+        <item>@string/theme_label_default</item>
+        <item>@string/theme_label_yellow</item>
+        <item>@string/theme_label_blue</item>
+        <item>@string/theme_label_red</item>
+        <item>@string/theme_label_green</item>
+    </string-array>
+    <string name="theme_label_default">Volg systeem</string>
+    <string name="theme_label_yellow">Geel</string>
     <string name="theme_label_blue">Blauw</string>
     <string name="theme_label_red">Rood</string>
     <string name="theme_label_green">Groen</string>
+
     <string name="preferences_profile_gender">Geslacht</string>
     <string-array name="gender_items">
         <item>@string/gender_label_other</item>

@@ -2,6 +2,7 @@ package nl.watkanikaan.app.ui
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -12,6 +13,8 @@ class WeatherApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        themeHelper.applyDynamicColors()
 
         AppCompatDelegate.setDefaultNightMode(themeHelper.getNightMode())
     }

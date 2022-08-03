@@ -28,6 +28,9 @@ class WeatherJsonAdapter {
     }
 
     private fun WeatherJson.WeatherDataJson.expectationDbModel() = buildMap {
+        val sunUp = parseSunTime(sunUpAt)
+        val sunUnder = parseSunTime(sunUnderAt)
+
         put(
             Weather.Day.NOW, WeatherEntity.Forecast(
                 dewPoint = dewPoint?.toIntOrNull(),
@@ -37,6 +40,8 @@ class WeatherJsonAdapter {
                 windSpeed = windSpeedMs.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationToday.toIntOr(),
                 chanceOfSun = chanceOfSunToday.toIntOr(),
+                sunUp = sunUp,
+                sunUnder = sunUnder,
             )
         )
         put(
@@ -48,6 +53,8 @@ class WeatherJsonAdapter {
                 windSpeed = windSpeedMsToday.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationToday.toIntOr(),
                 chanceOfSun = chanceOfSunToday.toIntOr(),
+                sunUp = sunUp,
+                sunUnder = sunUnder,
             )
         )
         put(
@@ -59,6 +66,8 @@ class WeatherJsonAdapter {
                 windSpeed = windSpeedMsTomorrow.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationTomorrow.toIntOr(),
                 chanceOfSun = chanceOfSunTomorrow.toIntOr(),
+                sunUp = sunUp,
+                sunUnder = sunUnder,
             )
         )
         put(
@@ -70,8 +79,19 @@ class WeatherJsonAdapter {
                 windSpeed = windSpeedMsDayAfterTomorrow.toDoubleOr(),
                 chanceOfPrecipitation = chanceOfPrecipitationDayAfterTomorrow.toIntOr(),
                 chanceOfSun = chanceOfSunDayAfterTomorrow.toIntOr(),
+                sunUp = sunUp,
+                sunUnder = sunUnder,
             )
         )
+    }
+
+    private fun parseSunTime(sun: String?): Int {
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            LocalTime.parse(sun, formatter).hour
+        } catch (e: ParseException) {
+            sun?.substring(0, 2).toIntOr()
+        }
     }
 
     fun mapTempExpectation(
@@ -80,13 +100,7 @@ class WeatherJsonAdapter {
         max: String?
     ): Double {
         val now = LocalDateTime.now().hour
-        val sunUpAtHour = try {
-            val formatter = DateTimeFormatter.ofPattern("HH:mm")
-            LocalTime.parse(sunUpAt, formatter).hour
-        } catch (e: ParseException) {
-            sunUpAt?.substring(0, 2).toIntOr()
-        }
-        return if (now > WARMEST_HOUR_OF_DAY || now < sunUpAtHour) {
+        return if (now > WARMEST_HOUR_OF_DAY || now < parseSunTime(sunUpAt)) {
             min.toDoubleOr()
         } else {
             max.toDoubleOr()

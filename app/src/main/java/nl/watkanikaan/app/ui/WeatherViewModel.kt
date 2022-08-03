@@ -71,9 +71,9 @@ class WeatherViewModel @Inject constructor(
         weather: Weather.Forecast,
     ) {
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(weather)
+            CalcRecommendationUseCase.Params(day, weather)
         ).collect { result ->
-            _recommendation.value = result.copy(selectedDay = day)
+            _recommendation.value = result
         }
     }
 

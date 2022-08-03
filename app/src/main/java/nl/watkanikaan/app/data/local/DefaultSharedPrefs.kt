@@ -19,11 +19,11 @@ class DefaultSharedPrefs @Inject constructor(
 
     override fun getDarkModeSetting() = spm.getIntValue(SHARED_PREF_DARK_MODE)
 
-    override fun setThemeSetting(darkMode: Int) {
-        spm.setIntValue(SHARED_PREF_THEME, darkMode)
+    override fun setThemeSetting(theme: Int) {
+        spm.setIntValue(SHARED_PREF_THEME, theme)
     }
 
-    override fun getThemeSetting() = spm.getIntValue(SHARED_PREF_THEME)
+    override fun getThemeSetting(): Int = spm.getIntValue(SHARED_PREF_THEME)
 
     override fun getThermoception() = spm.getStringValue(SHARED_PREF_THERMOCEPTION)?.toInt() ?: -1
 

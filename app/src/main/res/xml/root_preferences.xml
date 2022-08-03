@@ -45,8 +45,6 @@
 
         <ListPreference
             android:defaultValue="0"
-            android:entries="@array/theme_items"
-            android:entryValues="@array/theme_values"
             app:iconSpaceReserved="false"
             app:key="theme_key"
             app:title="@string/preferences_display_theme" />

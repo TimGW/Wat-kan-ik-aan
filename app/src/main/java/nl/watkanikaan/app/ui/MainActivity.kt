@@ -2,7 +2,6 @@ package nl.watkanikaan.app.ui
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -12,7 +11,6 @@ import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.ActivityMainBinding
-import nl.watkanikaan.app.domain.model.Weather
 import java.util.*
 import javax.inject.Inject
 
@@ -29,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setTheme(themeHelper.getAppTheme())
+        themeHelper.getAppTheme()?.let { setTheme(it) }
+        themeHelper.setLegacyNavBarColor(window.decorView, resources)
 
         setSupportActionBar(binding.appbar.toolbar)
         setToolbarTitle(R.string.now)

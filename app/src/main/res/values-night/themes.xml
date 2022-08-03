@@ -5,7 +5,7 @@
     <style name="MyTheme.DayNight" parent="Base.MyTheme">
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/color_background</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
     </style>
 
 </resources>

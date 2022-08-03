@@ -25,7 +25,5 @@
     <color name="color_on_background">#ffffff</color>
     <color name="color_on_surface">#ffffff</color>
     <color name="color_on_error">#000000</color>
-
-    <color name="color_alpha_12">#1FFFFFFF</color>
 </resources>
 

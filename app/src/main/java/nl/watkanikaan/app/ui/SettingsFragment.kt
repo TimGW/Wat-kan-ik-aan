@@ -10,6 +10,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.color.DynamicColors
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
@@ -92,7 +93,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun displayPrefs() {
         darkModePref?.summary = resources
             .getStringArray(R.array.night_mode_items)[sharedPrefs.getDarkModeSetting()]
-
         darkModePref?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val value = (newValue as String).toIntOrNull() ?: return@OnPreferenceChangeListener false
@@ -102,11 +102,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
-        themePref?.summary = resources
-            .getStringArray(R.array.theme_items)[sharedPrefs.getThemeSetting()]
 
-        themePref?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
+        if (themeHelper.hasDynamicColors()) {
+            val themeItems = resources.getStringArray(R.array.theme_items)
+            themePref?.entries = themeItems
+            themePref?.entryValues = resources.getStringArray(R.array.theme_values)
+            themePref?.summary = themeItems[sharedPrefs.getThemeSetting() ?: 0]
+        } else {
+            val themeItems = resources.getStringArray(R.array.legacy_theme_items)
+            themePref?.entries = themeItems
+            themePref?.entryValues = resources.getStringArray(R.array.legacy_theme_values)
+            themePref?.summary = themeItems[sharedPrefs.getThemeSetting() ?: 0]
+        }
+
+        themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
                 val themeSetting = (newValue as String).toIntOrNull() ?: return@OnPreferenceChangeListener false
                 sharedPrefs.setThemeSetting(themeSetting)
                 requireActivity().recreate()

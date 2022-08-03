@@ -23,6 +23,8 @@ data class WeatherEntity(
         @ColumnInfo(name = "wind_speed") val windSpeed: Double,
         @ColumnInfo(name = "chance_of_precipitation") val chanceOfPrecipitation: Int,
         @ColumnInfo(name = "chance_of_sun") val chanceOfSun: Int,
+        @ColumnInfo(name = "sun_up_at") val sunUp: Int,
+        @ColumnInfo(name = "sun_under_at") val sunUnder: Int,
     )
 
     companion object {
@@ -40,7 +42,9 @@ data class WeatherEntity(
                         it.value.windForce,
                         it.value.windSpeed,
                         it.value.chanceOfPrecipitation,
-                        it.value.chanceOfSun
+                        it.value.chanceOfSun,
+                        it.value.sunUp,
+                        it.value.sunUnder,
                     )
                 },
                 weatherAlarm = weatherAlarm,
@@ -61,7 +65,9 @@ data class WeatherEntity(
                 it.value.windForce,
                 it.value.windSpeed,
                 it.value.chanceOfPrecipitation,
-                it.value.chanceOfSun
+                it.value.chanceOfSun,
+                it.value.sunUp,
+                it.value.sunUnder,
             )
         },
         weatherAlarm = weatherAlarm,

@@ -3,7 +3,9 @@ package nl.watkanikaan.app.ui
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.WeatherItemBinding
@@ -65,11 +67,22 @@ class WeatherItemAdapter(
 
                 listener(day, forecast)
             }
-            val colorActive = context.getThemeColor(com.google.android.material.R.attr.colorPrimary)
-            val colorInactive = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
-            binding.card.setCardBackgroundColor(
-                if (selectedPos == adapterPosition) colorActive else colorInactive
-            )
+
+            val cardColor: Int
+            val contentColor: Int
+
+            if (selectedPos == adapterPosition) {
+                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimary)
+                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimary)
+            } else {
+                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
+                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnSurface)
+            }
+
+            binding.card.setCardBackgroundColor(cardColor)
+            binding.overline.setTextColor(contentColor)
+            binding.icon.setColorFilter(contentColor)
+            binding.underline.setTextColor(contentColor)
         }
     }
 }

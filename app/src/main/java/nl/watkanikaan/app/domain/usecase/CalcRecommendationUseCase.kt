@@ -14,6 +14,7 @@ import nl.watkanikaan.app.domain.model.Recommendation.Jacket
 import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
 class CalcRecommendationUseCase @Inject constructor(
@@ -21,15 +22,19 @@ class CalcRecommendationUseCase @Inject constructor(
     private val sharedPrefs: SharedPref,
 ) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
 
-    data class Params(val forecast: Weather.Forecast)
+    data class Params(
+        val day: Weather.Day,
+        val forecast: Weather.Forecast
+    )
 
     override fun execute(
         params: Params
     ) = flow {
-        emit(createRecommendation(params.forecast))
+        emit(createRecommendation(params.day, params.forecast))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
+        day: Weather.Day,
         forecast: Weather.Forecast,
     ): Recommendation {
         val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast)
@@ -38,7 +43,7 @@ class CalcRecommendationUseCase @Inject constructor(
             jacket = determineJacket(temp, forecast),
             top = determineTop(temp),
             bottom = determineBottom(temp, forecast),
-            extras = determineExtras(temp, forecast)
+            extras = determineExtras(day, temp, forecast)
         )
     }
 
@@ -71,13 +76,23 @@ class CalcRecommendationUseCase @Inject constructor(
     }
 
     private fun determineExtras(
+        day: Weather.Day,
         temp: Double,
         forecast: Weather.Forecast,
     ): Set<Extra> {
         val result = mutableSetOf<Extra>()
+        val now = LocalTime.now().hour
+        val today = day == Weather.Day.NOW || day == Weather.Day.TODAY
 
         if (forecast.dewPoint.isMuggy()) result.add(Extra.MUGGY)
-        if (forecast.isSunny()) result.add(Extra.SUNNY)
+
+        if (forecast.isSunny()) {
+            if (today) {
+                if (now in forecast.sunUp..forecast.sunUnder) result.add(Extra.SUNNY)
+            } else {
+                result.add(Extra.SUNNY)
+            }
+        }
         if (temp <= 5.0) result.add(Extra.FREEZING)
         if (forecast.isPrecipitationExpected()) {
             if (forecast.windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)

@@ -32,5 +32,7 @@ data class Weather(
         val windSpeed: Double,
         val chanceOfPrecipitation: Int,
         val chanceOfSun: Int,
+        val sunUp: Int,
+        val sunUnder: Int,
     )
 }
