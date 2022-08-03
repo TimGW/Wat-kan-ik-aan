@@ -40,6 +40,7 @@ class CalcRecommendationUseCase @Inject constructor(
         val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast)
 
         return Recommendation(
+            selectedDay = day,
             jacket = determineJacket(temp, forecast),
             top = determineTop(temp),
             bottom = determineBottom(temp, forecast),
