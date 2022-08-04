@@ -1,16 +1,19 @@
 package nl.watkanikaan.app.ui
 
 import android.location.Location
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import nl.watkanikaan.app.R
-import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
@@ -26,7 +29,6 @@ class WeatherViewModel @Inject constructor(
     private val updateLocationUseCase: UpdateLocationUseCase,
 ) : ViewModel() {
 
-    // todo create weather UI model to put the .toDays in
     private val _weather = MutableStateFlow<Result<Weather?>>(Result.Loading(null))
     val weather: StateFlow<Result<Weather?>> = _weather.asStateFlow()
 

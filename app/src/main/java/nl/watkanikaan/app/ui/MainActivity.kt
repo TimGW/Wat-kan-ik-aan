@@ -1,5 +1,6 @@
 package nl.watkanikaan.app.ui
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
@@ -11,6 +12,7 @@ import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.ActivityMainBinding
+import nl.watkanikaan.app.ui.theme.ThemeHelper
 import java.util.*
 import javax.inject.Inject
 
@@ -28,8 +30,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         themeHelper.getAppTheme()?.let { setTheme(it) }
-        themeHelper.setLegacyNavBarColor(window.decorView, resources)
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) window.decorView.systemUiVisibility =
+            themeHelper.getNavBarFlags(resources.getBoolean(R.bool.is_night))
         setSupportActionBar(binding.appbar.toolbar)
         setToolbarTitle(R.string.now)
 

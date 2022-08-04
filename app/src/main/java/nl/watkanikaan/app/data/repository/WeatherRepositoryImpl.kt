@@ -22,7 +22,7 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     companion object {
-        private const val REFRESH_HOURLY_INTERVAL = 6L // hours
+        private const val REFRESH_HOURLY_INTERVAL = 2L // hours
     }
 
     override fun fetchWeather(

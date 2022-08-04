@@ -1,19 +1,26 @@
 package nl.watkanikaan.app.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import nl.watkanikaan.app.R
 
+@Parcelize
 data class Weather(
     val location: String,
     val dayExpectation: String,
     val weatherAlarm: String,
     val modifiedAt: Long,
     val forecast: Map<Day, Forecast>,
-) {
-    enum class Day {
-        NOW,
-        TODAY,
-        TOMORROW,
-        DAY_AFTER_TOMORROW;
+) : Parcelable {
+
+    @Parcelize
+    enum class Day(val position: Int) : Parcelable {
+        NOW(0),
+        TODAY(1),
+        TOMORROW(2),
+        DAY_AFTER_TOMORROW(3);
+
+        fun findDay(position: Int) = values().find { it.position == position }
 
         // todo remove from model and remove boolean
         fun toText(isBreak: Boolean = false) = when (this) {
@@ -24,6 +31,7 @@ data class Weather(
         }
     }
 
+    @Parcelize
     data class Forecast(
         val dewPoint: Int?,
         val weatherIcon: String,
@@ -34,5 +42,5 @@ data class Weather(
         val chanceOfSun: Int,
         val sunUp: Int,
         val sunUnder: Int,
-    )
+    ) : Parcelable
 }

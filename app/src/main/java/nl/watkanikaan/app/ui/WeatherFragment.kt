@@ -45,7 +45,7 @@ class WeatherFragment : Fragment() {
     private lateinit var weatherAdapter: WeatherItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedForecast: Weather.Forecast? = null
-    private var selectedDay: Weather.Day? = null
+    private var selectedDay: Weather.Day = Weather.Day.NOW
     private val refresh by lazy {
         throttleFirst(THROTTLE_LIMIT, lifecycleScope, viewModel::refresh) {
             binding.swiperefresh.isRefreshing = false
@@ -59,6 +59,11 @@ class WeatherFragment : Fragment() {
         } else {
             showPermissionRationale { openSettings() }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(BUNDLE_EXTRA_SELECTED_POS, selectedDay)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,10 +92,14 @@ class WeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (savedInstanceState != null) {
+            selectedDay = savedInstanceState.getParcelable(BUNDLE_EXTRA_SELECTED_POS) ?: selectedDay
+        }
+
         binding.swiperefresh.setOnRefreshListener(refresh)
 
         binding.weatherRv.apply {
-            weatherAdapter = WeatherItemAdapter { day, forecast ->
+            weatherAdapter = WeatherItemAdapter(selectedDay) { day, forecast ->
                 selectedDay = day
                 selectedForecast = forecast
                 viewModel.updateRecommendation(day, forecast)
@@ -112,14 +121,6 @@ class WeatherFragment : Fragment() {
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (selectedDay != null && selectedForecast != null) {
-            viewModel.updateRecommendation(selectedDay!!, selectedForecast!!)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -229,5 +230,6 @@ class WeatherFragment : Fragment() {
 
     companion object {
         const val THROTTLE_LIMIT = 60L * 1000L
+        const val BUNDLE_EXTRA_SELECTED_POS = "BUNDLE_EXTRA_SELECTED_POS"
     }
 }

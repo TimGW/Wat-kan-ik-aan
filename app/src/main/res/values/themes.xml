@@ -10,6 +10,7 @@
         <item name="colorPrimaryVariant">@color/color_primary_variant_yellow</item>
         <item name="colorSecondary">@color/color_primary_yellow</item>
         <item name="colorSecondaryVariant">@color/color_primary_variant_yellow</item>
+        <item name="colorTertiary">@color/color_primary_yellow</item>
 
         <item name="android:colorBackground">@color/color_background</item>
         <item name="colorSurface">@color/color_surface</item>
@@ -40,7 +41,8 @@
         <item name="textAppearanceOverline">@style/TextAppearance.MyTheme.Overline</item>
 
         <!--Component styles-->
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert
+        </item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
         <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
     </style>
@@ -50,7 +52,9 @@
         <item name="android:statusBarColor">?android:colorBackground</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
-        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?android:colorBackground</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            ?android:colorBackground
+        </item>
     </style>
 
     <style name="AppTheme.Blue" parent="MyTheme.DayNight">

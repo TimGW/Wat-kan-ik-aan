@@ -10,11 +10,11 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.google.android.material.color.DynamicColors
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.data.local.SharedPref
+import nl.watkanikaan.app.ui.theme.ThemeHelper
 import javax.inject.Inject
 
 

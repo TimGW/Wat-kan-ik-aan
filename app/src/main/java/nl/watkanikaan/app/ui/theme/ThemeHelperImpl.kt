@@ -1,10 +1,7 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.ui.theme
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Resources
-import android.os.Build
-import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -64,14 +61,10 @@ class ThemeHelperImpl @Inject constructor(
 
     override fun hasDynamicColors() = DynamicColors.isDynamicColorAvailable()
 
-    override fun setLegacyNavBarColor(decorView: View, resources: Resources) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
-            decorView.systemUiVisibility = if (resources.getBoolean(R.bool.is_night)) {
-                FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or FLAG_TRANSLUCENT_NAVIGATION
-            } else {
-                FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
-        }
+    override fun getNavBarFlags(isNight: Boolean) = if (isNight) {
+        FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or FLAG_TRANSLUCENT_NAVIGATION
+    } else {
+        FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
     }
 
     companion object {

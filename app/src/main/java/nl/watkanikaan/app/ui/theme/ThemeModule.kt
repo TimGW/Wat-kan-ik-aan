@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.ui.theme
 
 import dagger.Binds
 import dagger.Module

@@ -2,8 +2,8 @@ package nl.watkanikaan.app.ui
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
+import nl.watkanikaan.app.ui.theme.ThemeHelper
 import javax.inject.Inject
 
 @HiltAndroidApp
