@@ -1,6 +1,8 @@
 package nl.watkanikaan.app.ui
 
 import android.location.Location
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -35,8 +37,8 @@ class WeatherViewModel @Inject constructor(
     private val _recommendation = MutableStateFlow<Recommendation?>(null)
     val recommendation: StateFlow<Recommendation?> = _recommendation.asStateFlow()
 
-    private val _toolbar = MutableStateFlow<Int?>(null)
-    val toolbar: StateFlow<Int?> = _toolbar.asStateFlow()
+    private val _toolbar = MutableLiveData<Int>()
+    val toolbar: LiveData<Int> = _toolbar
 
     init {
         fetchWeatherRecommendation()
@@ -79,7 +81,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun updateToolbarTitle(selectedDay: Weather.Day) = viewModelScope.launch {
+    fun updateToolbarTitle(selectedDay: Weather.Day) {
         _toolbar.value = selectedDay.toText()
     }
 

@@ -12,6 +12,7 @@ import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.ActivityMainBinding
+import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.ui.theme.ThemeHelper
 import java.util.*
 import javax.inject.Inject
@@ -31,27 +32,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         themeHelper.getAppTheme()?.let { setTheme(it) }
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) window.decorView.systemUiVisibility =
-            themeHelper.getNavBarFlags(resources.getBoolean(R.bool.is_night))
-        setSupportActionBar(binding.appbar.toolbar)
-        setToolbarTitle(R.string.now)
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            window.decorView.systemUiVisibility =
+                themeHelper.getNavBarFlags(resources.getBoolean(R.bool.is_night))
+        }
+        setupToolbar()
+    }
 
+    private fun setupToolbar() {
+        setSupportActionBar(binding.appbar.toolbar)
         NavigationUI.setupActionBarWithNavController(
             this,
             getNavController(),
             AppBarConfiguration.Builder(R.id.weatherFragment).build()
         )
-
-        launchAfter {
-            viewModel.toolbar.collect { titleRes ->
-                setToolbarTitle(titleRes)
-            }
+        viewModel.toolbar.observe(this) { titleRes ->
+            setToolbarTitle(titleRes)
         }
+        viewModel.updateToolbarTitle(Weather.Day.NOW)
     }
 
-    private fun setToolbarTitle(@StringRes titleRes: Int?) {
-        if (titleRes == null) return
-
+    private fun setToolbarTitle(@StringRes titleRes: Int) {
         val day = getString(titleRes)
         val title = getString(R.string.app_name_param, day.lowercase(Locale.getDefault()))
         supportActionBar?.title = title
