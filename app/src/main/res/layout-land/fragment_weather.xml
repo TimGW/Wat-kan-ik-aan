@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@+id/jacket"
-            style="@style/TextAppearance.MyTheme.Headline4"
+            style="@style/TextAppearance.MyTheme.DisplaySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -36,7 +36,7 @@
 
         <TextView
             android:id="@+id/top"
-            style="@style/TextAppearance.MyTheme.Headline4"
+            style="@style/TextAppearance.MyTheme.DisplaySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -49,7 +49,7 @@
 
         <TextView
             android:id="@+id/bottom"
-            style="@style/TextAppearance.MyTheme.Headline4"
+            style="@style/TextAppearance.MyTheme.DisplaySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -62,7 +62,7 @@
 
         <TextView
             android:id="@+id/extra"
-            style="@style/TextAppearance.MyTheme.Headline6"
+            style="@style/TextAppearance.MyTheme.TitleLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -94,7 +94,7 @@
 
         <TextView
             android:id="@+id/location"
-            style="@style/TextAppearance.MyTheme.Caption"
+            style="@style/TextAppearance.MyTheme.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/last_updated"
@@ -103,7 +103,7 @@
 
         <TextView
             android:id="@+id/last_updated"
-            style="@style/TextAppearance.MyTheme.Caption"
+            style="@style/TextAppearance.MyTheme.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

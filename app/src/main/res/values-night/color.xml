@@ -1,29 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--DARK COLOR THEME-->
-    <!--The same color values are defined for dark theme, but with values more appropriate for -->
-    <!--low-luminance UIs. These colors will be used by night/themes.xml.-->
+    <color name="color_blue_primary">#bec2ff</color>
+    <color name="color_blue_onPrimary">#0001ac</color>
+    <color name="color_blue_primaryContainer">#0000ef</color>
+    <color name="color_blue_onPrimaryContainer">#e0e0ff</color>
+    <color name="color_blue_secondary">#c5c4dd</color>
+    <color name="color_blue_onSecondary">#2e2f42</color>
+    <color name="color_blue_secondaryContainer">#444559</color>
+    <color name="color_blue_onSecondaryContainer">#e1e0f9</color>
+    <color name="color_blue_tertiary">#e8b9d5</color>
+    <color name="color_blue_onTertiary">#46263b</color>
+    <color name="color_blue_tertiaryContainer">#5e3c52</color>
+    <color name="color_blue_onTertiaryContainer">#ffd8ee</color>
+    <color name="color_blue_error">#ffb4ab</color>
+    <color name="color_blue_onError">#690005</color>
+    <color name="color_blue_errorContainer">#93000a</color>
+    <color name="color_blue_onErrorContainer">#ffdad6</color>
+    <color name="color_blue_background">#1b1b1f</color>
+    <color name="color_blue_onBackground">#e5e1e6</color>
+    <color name="color_blue_surface">#1b1b1f</color>
+    <color name="color_blue_onSurface">#e5e1e6</color>
+    <color name="color_blue_outline">#91909a</color>
+    <color name="color_blue_surfaceVariant">#46464f</color>
+    <color name="color_blue_onSurfaceVariant">#c7c5d0</color>
 
-    <color name="color_primary_blue">#a9c5f9</color>
-    <color name="color_primary_variant_blue">#465060</color>
+    <color name="color_red_primary">#ffb4a8</color>
+    <color name="color_red_onPrimary">#690000</color>
+    <color name="color_red_primaryContainer">#930000</color>
+    <color name="color_red_onPrimaryContainer">#ffdad4</color>
+    <color name="color_red_secondary">#e7bdb6</color>
+    <color name="color_red_onSecondary">#442925</color>
+    <color name="color_red_secondaryContainer">#5d3f3b</color>
+    <color name="color_red_onSecondaryContainer">#ffdad4</color>
+    <color name="color_red_tertiary">#dec48c</color>
+    <color name="color_red_onTertiary">#3e2e04</color>
+    <color name="color_red_tertiaryContainer">#564419</color>
+    <color name="color_red_onTertiaryContainer">#fbdfa6</color>
+    <color name="color_red_error">#ffb4ab</color>
+    <color name="color_red_onError">#690005</color>
+    <color name="color_red_errorContainer">#93000a</color>
+    <color name="color_red_onErrorContainer">#ffdad6</color>
+    <color name="color_red_background">#201a19</color>
+    <color name="color_red_onBackground">#ede0dd</color>
+    <color name="color_red_surface">#201a19</color>
+    <color name="color_red_onSurface">#ede0dd</color>
+    <color name="color_red_outline">#a08c89</color>
+    <color name="color_red_surfaceVariant">#534341</color>
+    <color name="color_red_onSurfaceVariant">#d8c2be</color>
 
-    <color name="color_primary_red">#ef5350</color>
-    <color name="color_primary_variant_red">#b61827</color>
+    <color name="color_green_primary">#43e188</color>
+    <color name="color_green_onPrimary">#00391c</color>
+    <color name="color_green_primaryContainer">#00522b</color>
+    <color name="color_green_onPrimaryContainer">#66fea2</color>
+    <color name="color_green_secondary">#b6ccb8</color>
+    <color name="color_green_onSecondary">#223527</color>
+    <color name="color_green_secondaryContainer">#384b3c</color>
+    <color name="color_green_onSecondaryContainer">#d2e8d4</color>
+    <color name="color_green_tertiary">#a2ceda</color>
+    <color name="color_green_onTertiary">#023640</color>
+    <color name="color_green_tertiaryContainer">#214c57</color>
+    <color name="color_green_onTertiaryContainer">#beeaf6</color>
+    <color name="color_green_error">#ffb4ab</color>
+    <color name="color_green_onError">#690005</color>
+    <color name="color_green_errorContainer">#93000a</color>
+    <color name="color_green_onErrorContainer">#ffdad6</color>
+    <color name="color_green_background">#191c19</color>
+    <color name="color_green_onBackground">#e1e3de</color>
+    <color name="color_green_surface">#191c19</color>
+    <color name="color_green_onSurface">#e1e3de</color>
+    <color name="color_green_outline">#8b938a</color>
+    <color name="color_green_surfaceVariant">#414942</color>
+    <color name="color_green_onSurfaceVariant">#c1c9bf</color>
 
-    <color name="color_primary_green">#3DDC84</color>
-    <color name="color_primary_variant_green">#7affb4</color>
-
-    <color name="color_primary_yellow">#FFD740</color>
-    <color name="color_primary_variant_yellow">#FFAB40</color>
-
-    <color name="color_background">#121212</color>
-    <color name="color_surface">#121212</color>
-    <color name="color_error">#cf6679</color>
-
-    <color name="color_on_primary">#121212</color>
-    <color name="color_on_secondary">#121212</color>
-    <color name="color_on_background">#ffffff</color>
-    <color name="color_on_surface">#ffffff</color>
-    <color name="color_on_error">#000000</color>
+    <color name="color_yellow_primary">#DCC668</color>
+    <color name="color_yellow_onPrimary">#3A3000</color>
+    <color name="color_yellow_primaryContainer">#534600</color>
+    <color name="color_yellow_onPrimaryContainer">#FAE281</color>
+    <color name="color_yellow_secondary">#D0C6A9</color>
+    <color name="color_yellow_onSecondary">#35301C</color>
+    <color name="color_yellow_secondaryContainer">#4D4730</color>
+    <color name="color_yellow_onSecondaryContainer">#ECE2C4</color>
+    <color name="color_yellow_tertiary">#B1CEB7</color>
+    <color name="color_yellow_onTertiary">#1D3626</color>
+    <color name="color_yellow_tertiaryContainer">#334C3B</color>
+    <color name="color_yellow_onTertiaryContainer">#CDEAD2</color>
+    <color name="color_yellow_error">#FFB4AB</color>
+    <color name="color_yellow_onError">#690005</color>
+    <color name="color_yellow_errorContainer">#93000A</color>
+    <color name="color_yellow_onErrorContainer">#FFB4AB</color>
+    <color name="color_yellow_background">#1D1B17</color>
+    <color name="color_yellow_onBackground">#E7E2DB</color>
+    <color name="color_yellow_surface">#1D1B17</color>
+    <color name="color_yellow_onSurface">#E7E2DB</color>
+    <color name="color_yellow_outline">#959084</color>
+    <color name="color_yellow_surfaceVariant">#4A473C</color>
+    <color name="color_yellow_onSurfaceVariant">#CCC6B8</color>
 </resources>
 

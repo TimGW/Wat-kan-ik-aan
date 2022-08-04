@@ -64,14 +64,14 @@ class WeatherItemAdapter(
                 ResourcesCompat.getDrawable(context.resources, R.drawable.refresh, null)
             }
             binding.icon.setImageDrawable(drawable)
-            binding.overline.text = context.getText(day.toText(true))
+            binding.overline.text = context.getText(day.toText())
             binding.underline.text = context.getString(R.string.temperature, forecast.windChillTemp.roundToInt().toString())
 
             val cardColor: Int
             val contentColor: Int
             if (selectedDay == day) {
-                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimary)
-                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimary)
+                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer)
+                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)
             } else {
                 cardColor = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
                 contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnSurface)

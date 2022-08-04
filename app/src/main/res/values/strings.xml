@@ -20,7 +20,6 @@
     <string name="now">Nu</string>
     <string name="today">Straks</string>
     <string name="tomorrow">Morgen</string>
-    <string name="day_after_tomorrow_break">Over-\nmorgen</string>
     <string name="day_after_tomorrow">Overmorgen</string>
     <string name="last_updated">Laatste update: %1$s</string>
     <string name="temperature">%1$s°C</string>

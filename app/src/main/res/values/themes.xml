@@ -6,39 +6,20 @@
 
     <!--Base custom theme which will be shared between both light and dark theme variants-->
     <style name="Base.MyTheme" parent="Base.MaterialThemeBuilder">
-        <item name="colorPrimary">@color/color_primary_yellow</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant_yellow</item>
-        <item name="colorSecondary">@color/color_primary_yellow</item>
-        <item name="colorSecondaryVariant">@color/color_primary_variant_yellow</item>
-        <item name="colorTertiary">@color/color_primary_yellow</item>
+        <item name="iconTint">?colorSecondary</item>
 
-        <item name="android:colorBackground">@color/color_background</item>
-        <item name="colorSurface">@color/color_surface</item>
-        <item name="colorError">@color/color_error</item>
-
-        <item name="colorOnPrimary">@color/color_on_primary</item>
-        <item name="colorOnSecondary">@color/color_on_secondary</item>
-        <item name="colorOnBackground">@color/color_on_background</item>
-        <item name="colorOnSurface">@color/color_on_surface</item>
-        <item name="colorOnError">@color/color_on_error</item>
-
-        <item name="iconTint">?colorPrimary</item>
-        <item name="android:textColor">?colorOnSurface</item>
-
-        <!--Material type attributes-->
-        <item name="textAppearanceHeadline1">@style/TextAppearance.MyTheme.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.MyTheme.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/TextAppearance.MyTheme.Headline3</item>
-        <item name="textAppearanceHeadline4">@style/TextAppearance.MyTheme.Headline4</item>
-        <item name="textAppearanceHeadline5">@style/TextAppearance.MyTheme.Headline5</item>
-        <item name="textAppearanceHeadline6">@style/TextAppearance.MyTheme.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.MyTheme.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/TextAppearance.MyTheme.Subtitle2</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.MyTheme.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.MyTheme.Body2</item>
-        <item name="textAppearanceButton">@style/TextAppearance.MyTheme.Button</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.MyTheme.Caption</item>
-        <item name="textAppearanceOverline">@style/TextAppearance.MyTheme.Overline</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.MyTheme.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.MyTheme.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.MyTheme.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.MyTheme.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.MyTheme.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.MyTheme.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.MyTheme.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.MyTheme.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.MyTheme.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.MyTheme.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.MyTheme.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.MyTheme.LabelSmall</item>
 
         <!--Component styles-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert
@@ -58,31 +39,107 @@
     </style>
 
     <style name="AppTheme.Blue" parent="MyTheme.DayNight">
-        <item name="colorPrimary">@color/color_primary_blue</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant_blue</item>
-        <item name="colorSecondary">@color/color_primary_blue</item>
-        <item name="colorSecondaryVariant">@color/color_primary_variant_blue</item>
+        <item name="colorPrimary">@color/color_blue_primary</item>
+        <item name="colorOnPrimary">@color/color_blue_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/color_blue_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/color_blue_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/color_blue_secondary</item>
+        <item name="colorOnSecondary">@color/color_blue_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/color_blue_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/color_blue_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/color_blue_tertiary</item>
+        <item name="colorOnTertiary">@color/color_blue_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/color_blue_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/color_blue_onTertiaryContainer</item>
+        <item name="colorError">@color/color_blue_error</item>
+        <item name="colorOnError">@color/color_blue_onError</item>
+        <item name="colorErrorContainer">@color/color_blue_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/color_blue_onErrorContainer</item>
+        <item name="android:colorBackground">@color/color_blue_background</item>
+        <item name="colorOnBackground">@color/color_blue_onBackground</item>
+        <item name="colorSurface">@color/color_blue_surface</item>
+        <item name="colorOnSurface">@color/color_blue_onSurface</item>
+        <item name="colorSurfaceVariant">@color/color_blue_onSurfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/color_blue_onSurfaceVariant</item>
+        <item name="colorOutline">@color/color_blue_outline</item>
     </style>
 
     <style name="AppTheme.Red" parent="MyTheme.DayNight">
-        <item name="colorPrimary">@color/color_primary_red</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant_red</item>
-        <item name="colorSecondary">@color/color_primary_red</item>
-        <item name="colorSecondaryVariant">@color/color_primary_variant_red</item>
+        <item name="colorPrimary">@color/color_red_primary</item>
+        <item name="colorOnPrimary">@color/color_red_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/color_red_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/color_red_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/color_red_secondary</item>
+        <item name="colorOnSecondary">@color/color_red_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/color_red_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/color_red_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/color_red_tertiary</item>
+        <item name="colorOnTertiary">@color/color_red_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/color_red_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/color_red_onTertiaryContainer</item>
+        <item name="colorError">@color/color_red_error</item>
+        <item name="colorOnError">@color/color_red_onError</item>
+        <item name="colorErrorContainer">@color/color_red_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/color_red_onErrorContainer</item>
+        <item name="android:colorBackground">@color/color_red_background</item>
+        <item name="colorOnBackground">@color/color_red_onBackground</item>
+        <item name="colorSurface">@color/color_red_surface</item>
+        <item name="colorOnSurface">@color/color_red_onSurface</item>
+        <item name="colorSurfaceVariant">@color/color_red_onSurfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/color_red_onSurfaceVariant</item>
+        <item name="colorOutline">@color/color_red_outline</item>
     </style>
 
     <style name="AppTheme.Green" parent="MyTheme.DayNight">
-        <item name="colorPrimary">@color/color_primary_green</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant_green</item>
-        <item name="colorSecondary">@color/color_primary_green</item>
-        <item name="colorSecondaryVariant">@color/color_primary_variant_green</item>
+        <item name="colorPrimary">@color/color_green_primary</item>
+        <item name="colorOnPrimary">@color/color_green_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/color_green_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/color_green_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/color_green_secondary</item>
+        <item name="colorOnSecondary">@color/color_green_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/color_green_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/color_green_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/color_green_tertiary</item>
+        <item name="colorOnTertiary">@color/color_green_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/color_green_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/color_green_onTertiaryContainer</item>
+        <item name="colorError">@color/color_green_error</item>
+        <item name="colorOnError">@color/color_green_onError</item>
+        <item name="colorErrorContainer">@color/color_green_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/color_green_onErrorContainer</item>
+        <item name="android:colorBackground">@color/color_green_background</item>
+        <item name="colorOnBackground">@color/color_green_onBackground</item>
+        <item name="colorSurface">@color/color_green_surface</item>
+        <item name="colorOnSurface">@color/color_green_onSurface</item>
+        <item name="colorSurfaceVariant">@color/color_green_onSurfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/color_green_onSurfaceVariant</item>
+        <item name="colorOutline">@color/color_green_outline</item>
     </style>
 
     <style name="AppTheme.Yellow" parent="MyTheme.DayNight">
-        <item name="colorPrimary">@color/color_primary_yellow</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant_yellow</item>
-        <item name="colorSecondary">@color/color_primary_yellow</item>
-        <item name="colorSecondaryVariant">@color/color_primary_variant_yellow</item>
+        <item name="colorPrimary">@color/color_yellow_primary</item>
+        <item name="colorOnPrimary">@color/color_yellow_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/color_yellow_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/color_yellow_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/color_yellow_secondary</item>
+        <item name="colorOnSecondary">@color/color_yellow_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/color_yellow_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/color_yellow_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/color_yellow_tertiary</item>
+        <item name="colorOnTertiary">@color/color_yellow_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/color_yellow_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/color_yellow_onTertiaryContainer</item>
+        <item name="colorError">@color/color_yellow_error</item>
+        <item name="colorOnError">@color/color_yellow_onError</item>
+        <item name="colorErrorContainer">@color/color_yellow_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/color_yellow_onErrorContainer</item>
+        <item name="android:colorBackground">@color/color_yellow_background</item>
+        <item name="colorOnBackground">@color/color_yellow_onBackground</item>
+        <item name="colorSurface">@color/color_yellow_surface</item>
+        <item name="colorOnSurface">@color/color_yellow_onSurface</item>
+        <item name="colorSurfaceVariant">@color/color_yellow_onSurfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/color_yellow_onSurfaceVariant</item>
+        <item name="colorOutline">@color/color_yellow_outline</item>
     </style>
 
 </resources>
