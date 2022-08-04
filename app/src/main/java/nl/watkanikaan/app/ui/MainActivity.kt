@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.appbar.toolbar)
+        setSupportActionBar(binding.toolbar)
         NavigationUI.setupActionBarWithNavController(
             this,
             getNavController(),

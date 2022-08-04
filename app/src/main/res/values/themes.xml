@@ -21,11 +21,6 @@
         <item name="textAppearanceLabelMedium">@style/TextAppearance.MyTheme.LabelMedium</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.MyTheme.LabelSmall</item>
 
-        <!--Component styles-->
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert
-        </item>
-        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
     </style>
 
     <style name="Base.MaterialThemeBuilder" parent="Theme.Material3.DayNight.NoActionBar">
