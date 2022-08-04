@@ -24,20 +24,22 @@ class CalcRecommendationUseCase @Inject constructor(
 
     data class Params(
         val day: Weather.Day,
-        val forecast: Weather.Forecast
+        val forecast: Weather.Forecast,
+        val movement: Profile.Movement?
     )
 
     override fun execute(
         params: Params
     ) = flow {
-        emit(createRecommendation(params.day, params.forecast))
+        emit(createRecommendation(params.day, params.forecast, params.movement))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
         day: Weather.Day,
         forecast: Weather.Forecast,
+        movement: Profile.Movement?
     ): Recommendation {
-        val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast)
+        val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast, movement)
 
         return Recommendation(
             selectedDay = day,
@@ -104,7 +106,8 @@ class CalcRecommendationUseCase @Inject constructor(
 @Suppress("UNUSED_EXPRESSION")
 fun actuarialTemperature(
     profile: Profile,
-    forecast: Weather.Forecast
+    forecast: Weather.Forecast,
+    movement: Profile.Movement?
 ): Double {
     var addition = 0.0
 
@@ -113,10 +116,10 @@ fun actuarialTemperature(
         Profile.Thermoception.Normal -> addition
         Profile.Thermoception.Warm -> addition += 2.5
     }
-    when (profile.movement) {
-        Profile.Movement.Rest -> addition += 0.0
-        Profile.Movement.Light -> addition += 2.0
+    when (movement) {
+        Profile.Movement.Light -> addition += 1.0
         Profile.Movement.Heavy -> addition += 4.0
+        else -> addition -= 1.0
     }
     if (profile.age >= 70) addition -= 2.0
     if (profile.gender is Profile.Gender.Female) addition -= 2.5

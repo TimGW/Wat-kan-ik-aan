@@ -4,7 +4,7 @@ data class Profile(
     val thermoception: Thermoception = Thermoception.Normal,
     val gender: Gender = Gender.Unspecified,
     val age: Int = 30,
-    val movement: Movement = Movement.Rest,
+//    val movement: Movement = Movement.Rest, FIXME
 ) {
     sealed interface Thermoception {
         object Cold : Thermoception
