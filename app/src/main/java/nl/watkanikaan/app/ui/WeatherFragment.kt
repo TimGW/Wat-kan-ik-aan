@@ -34,6 +34,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
+import nl.watkanikaan.app.databinding.LayoutChipsMovementBinding
+import nl.watkanikaan.app.databinding.LayoutContentBinding
+import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
@@ -45,10 +48,13 @@ import java.util.*
 class WeatherFragment : Fragment(), MenuProvider {
     private val viewModel: WeatherViewModel by activityViewModels()
     private lateinit var binding: FragmentWeatherBinding
+    private lateinit var movementBinding: LayoutChipsMovementBinding
+    private lateinit var contentBinding: LayoutContentBinding
     private lateinit var weatherAdapter: WeatherItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedForecast: Weather.Forecast? = null
     private var selectedDay: Weather.Day = Weather.Day.NOW
+    private var selectedMovement: Profile.Movement = Profile.Movement.Rest
     private val refresh by lazy {
         throttleFirst(THROTTLE_LIMIT, lifecycleScope, viewModel::refresh) {
             binding.swiperefresh.isRefreshing = false
@@ -88,9 +94,12 @@ class WeatherFragment : Fragment(), MenuProvider {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWeatherBinding.inflate(layoutInflater)
+        val root = binding.root
+        movementBinding = LayoutChipsMovementBinding.bind(root)
+        contentBinding = LayoutContentBinding.bind(root)
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
-        return binding.root
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,6 +116,7 @@ class WeatherFragment : Fragment(), MenuProvider {
                 selectedDay = day
                 selectedForecast = forecast
                 viewModel.updateRecommendation(day, forecast)
+//                viewModel.recalculateRecommendation()
             }
             adapter = weatherAdapter
             layoutManager = FlexboxLayoutManager(
@@ -125,6 +135,16 @@ class WeatherFragment : Fragment(), MenuProvider {
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
+
+        movementBinding.chipNoMovement.setOnClickListener {
+            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Rest)
+        }
+        movementBinding.chipLightMovement.setOnClickListener {
+            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Light)
+        }
+        movementBinding.chipHeavyMovement.setOnClickListener {
+            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Heavy)
+        }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -167,16 +187,16 @@ class WeatherFragment : Fragment(), MenuProvider {
         with(recommendation) {
             viewModel.updateToolbarTitle(recommendation.selectedDay)
 
-            binding.jacket.visibility = if (jacket?.type == null) {
+            contentBinding.jacket.visibility = if (jacket?.type == null) {
                 View.GONE
             } else {
-                binding.jacket.text = getString(jacket.type)
+                contentBinding.jacket.text = getString(jacket.type)
                 View.VISIBLE
             }
 
-            binding.top.text = getString(top.type)
-            binding.bottom.text = getString(bottom.type)
-            binding.extra.text = extras.joinToString("en, ") { extra ->
+            contentBinding.top.text = getString(top.type)
+            contentBinding.bottom.text = getString(bottom.type)
+            contentBinding.extra.text = extras.joinToString("en, ") { extra ->
                 extra.message?.let { getString(it) }?.toString().orEmpty()
             }
         }

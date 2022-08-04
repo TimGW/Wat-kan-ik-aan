@@ -13,103 +13,133 @@
         android:padding="16dp"
         tools:context=".ui.MainActivity">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chips"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:paddingHorizontal="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/weather_rv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/center_guide"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:context=".ui.MainActivity">
+
+            <include layout="@layout/layout_chips_movement" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
+            android:id="@+id/center_guide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
-        <TextView
-            android:id="@+id/jacket"
-            style="@style/TextAppearance.MyTheme.DisplaySmall"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/top"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="winterjas" />
-
-        <TextView
-            android:id="@+id/top"
-            style="@style/TextAppearance.MyTheme.DisplaySmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/bottom"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/jacket"
-            tools:text="T-shirt" />
-
-        <TextView
-            android:id="@+id/bottom"
-            style="@style/TextAppearance.MyTheme.DisplaySmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/extra"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top"
-            tools:text="lange broek" />
-
-        <TextView
-            android:id="@+id/extra"
-            style="@style/TextAppearance.MyTheme.TitleLarge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bottom"
-            tools:text="extra: sjaal" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/weather_rv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:padding="4dp"
-            android:scrollbarSize="0dp"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:itemCount="4"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/weather_item"
-            tools:spanCount="4" />
-
-        <TextView
-            android:id="@+id/location"
-            style="@style/TextAppearance.MyTheme.BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/last_updated"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="locatie: 12:45" />
-
-        <TextView
-            android:id="@+id/last_updated"
-            style="@style/TextAppearance.MyTheme.BodySmall"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/location"
-            tools:text="last updated: 12:45" />
+            app:layout_constraintEnd_toStartOf="@+id/center_guide"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <include layout="@layout/layout_content" />
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/jacket"-->
+    <!--            style="@style/TextAppearance.MyTheme.DisplaySmall"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:textAlignment="center"-->
+    <!--            app:layout_constraintBottom_toTopOf="@+id/top"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/center_guide"-->
+    <!--            app:layout_constraintHorizontal_bias="0.5"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintVertical_chainStyle="packed"-->
+    <!--            tools:text="winterjas" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/top"-->
+    <!--            style="@style/TextAppearance.MyTheme.DisplaySmall"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:textAlignment="center"-->
+    <!--            app:layout_constraintBottom_toTopOf="@+id/bottom"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/center_guide"-->
+    <!--            app:layout_constraintHorizontal_bias="0.5"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/jacket"-->
+    <!--            tools:text="T-shirt" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/bottom"-->
+    <!--            style="@style/TextAppearance.MyTheme.DisplaySmall"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:textAlignment="center"-->
+    <!--            app:layout_constraintBottom_toTopOf="@+id/extra"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/center_guide"-->
+    <!--            app:layout_constraintHorizontal_bias="0.5"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/top"-->
+    <!--            tools:text="lange broek" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/extra"-->
+    <!--            style="@style/TextAppearance.MyTheme.TitleLarge"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:textAlignment="center"-->
+    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/center_guide"-->
+    <!--            app:layout_constraintHorizontal_bias="0.5"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/bottom"-->
+    <!--            tools:text="extra: sjaal" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/weather_rv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingVertical="4dp"
+        android:scrollbarSize="0dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/last_updated"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/center_guide"
+        app:layout_constraintTop_toBottomOf="@+id/chips"
+        tools:itemCount="4"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/weather_item"
+        tools:spanCount="4" />
+
+    <TextView
+        android:id="@+id/location"
+        style="@style/TextAppearance.MyTheme.BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/last_updated"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="locatie: 12:45" />
+
+    <TextView
+        android:id="@+id/last_updated"
+        style="@style/TextAppearance.MyTheme.BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/location"
+        tools:text="last updated: 12:45" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

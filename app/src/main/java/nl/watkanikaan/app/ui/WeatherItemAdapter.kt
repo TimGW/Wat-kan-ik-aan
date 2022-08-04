@@ -69,15 +69,19 @@ class WeatherItemAdapter(
 
             val cardColor: Int
             val contentColor: Int
+            val strokeWidth: Int
             if (selectedDay == day) {
                 cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer)
                 contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)
+                strokeWidth = 0
             } else {
                 cardColor = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
                 contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnSurface)
+                strokeWidth = context.resources.getDimensionPixelSize(R.dimen.card_stroke_width)
             }
 
             binding.card.setCardBackgroundColor(cardColor)
+            binding.card.strokeWidth = strokeWidth
             binding.overline.setTextColor(contentColor)
             binding.icon.setColorFilter(contentColor)
             binding.underline.setTextColor(contentColor)

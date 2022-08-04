@@ -3,19 +3,15 @@ package nl.watkanikaan.app.ui
 import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
@@ -73,9 +69,10 @@ class WeatherViewModel @Inject constructor(
     private suspend fun executeRecommendation(
         day: Weather.Day,
         weather: Weather.Forecast,
+        movement: Profile.Movement? = null
     ) {
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(day, weather)
+            CalcRecommendationUseCase.Params(day, weather, movement)
         ).collect { result ->
             _recommendation.value = result
         }
@@ -88,4 +85,13 @@ class WeatherViewModel @Inject constructor(
     fun updateLocation(location: Location) {
         updateLocationUseCase.execute(UpdateLocationUseCase.Params(location))
     }
+
+    fun recalculateRecommendation(
+        day: Weather.Day,
+        movement: Profile.Movement
+    ) = viewModelScope.launch {
+        val forecast = weather.value.data?.forecast?.get(day) ?: return@launch
+        _weather.value.data?.let { executeRecommendation(day, forecast, movement) }
+    }
+
 }

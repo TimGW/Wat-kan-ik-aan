@@ -120,5 +120,9 @@
     <string name="location_settings">Instellingen</string>
     <string name="review_flow_done">Bedankt dat je ons laat weten wat je ervan vindt!</string>
     <string name="error_generic">Er is iets fout gegaan</string>
+    <string name="label_movement">Beweging</string>
+    <string name="chip_movement_none">Geen</string>
+    <string name="chip_movement_light">Licht</string>
+    <string name="chip_movement_heavy">Zwaar</string>
 
 </resources>
