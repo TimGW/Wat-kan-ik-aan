@@ -28,6 +28,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.R
@@ -94,7 +95,8 @@ class WeatherFragment : Fragment(), MenuProvider {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState != null) {
-            selectedPosition = savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
+            selectedPosition =
+                savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
         }
 
         binding.swiperefresh.setOnRefreshListener(viewModel::refresh)
@@ -110,10 +112,12 @@ class WeatherFragment : Fragment(), MenuProvider {
         }
 
         binding.weatherRv.apply {
-            forecastAdapter = ForecastItemAdapter(selectedPosition) { forecast, position ->
-                selectedPosition = position
-                viewModel.selectDay(forecast)
-            }
+            forecastAdapter =
+                ForecastItemAdapter(selectedPosition) { forecast, position, isLongClick ->
+                    selectedPosition = position
+                    viewModel.selectDay(forecast)
+                    if (isLongClick) showForecastDialog(forecast)
+                }
             adapter = forecastAdapter
             layoutManager = FlexboxLayoutManager(
                 requireContext(),
@@ -125,7 +129,11 @@ class WeatherFragment : Fragment(), MenuProvider {
 
             overScrollMode = View.OVER_SCROLL_NEVER
             isNestedScrollingEnabled = false
-            addItemDecoration(ForecastItemDecoration(resources.getDimension(R.dimen.keyline_4).toInt()))
+            addItemDecoration(
+                ForecastItemDecoration(
+                    resources.getDimension(R.dimen.keyline_4).toInt()
+                )
+            )
         }
 
         viewModel.dismissLoader.observe(viewLifecycleOwner) {
@@ -134,6 +142,27 @@ class WeatherFragment : Fragment(), MenuProvider {
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
+    }
+
+    private fun showForecastDialog(
+        forecast: Weather.Forecast
+    ) {
+        val title = getString(R.string.alert_dialog_forecast_title, getString(forecast.day.toText()).lowercase())
+        val nl = "\n"
+        val message = buildString {
+            append(getString(R.string.alert_dialog_forecast_msg_temp, forecast.windChillTemp), nl)
+            append(getString(R.string.alert_dialog_forecast_msg_rain, forecast.chanceOfPrecipitation), nl)
+            append(getString(R.string.alert_dialog_forecast_msg_sun, forecast.chanceOfSun), nl)
+            append(getString(R.string.alert_dialog_forecast_msg_wind, forecast.windForce), nl)
+            append(getString(R.string.alert_dialog_forecast_msg_sunup, forecast.sunUp), nl)
+            append(getString(R.string.alert_dialog_forecast_msg_sununder, forecast.sunUnder))
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setNeutralButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
     override fun onResume() {

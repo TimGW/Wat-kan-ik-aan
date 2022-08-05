@@ -125,5 +125,12 @@
     <string name="chip_movement_rest">Rust</string>
     <string name="chip_movement_light">Licht</string>
     <string name="chip_movement_heavy">Zwaar</string>
+    <string name="alert_dialog_forecast_title">Vooruitzicht %1$s</string>
+    <string name="alert_dialog_forecast_msg_temp">Gevoelstemperatuur: %1$.1f</string>
+    <string name="alert_dialog_forecast_msg_rain">Kans op regen: %1$d%%</string>
+    <string name="alert_dialog_forecast_msg_sun">Kans op zon: %1$d%%</string>
+    <string name="alert_dialog_forecast_msg_wind">Windkracht: %1$d</string>
+    <string name="alert_dialog_forecast_msg_sunup">Zonsopkomst om: %1$d:00</string>
+    <string name="alert_dialog_forecast_msg_sununder">Zonsondergang om: %1$d:00</string>
 
 </resources>

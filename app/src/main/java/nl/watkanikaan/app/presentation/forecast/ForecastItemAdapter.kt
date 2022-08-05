@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 class ForecastItemAdapter(
     private var selectedPosition: Int,
     private val weatherData: MutableList<Weather.Forecast> = mutableListOf(),
-    private val listener: (Weather.Forecast, Int) -> Unit
+    private val clickListener: (Weather.Forecast, Int, Boolean) -> Unit,
 ) : RecyclerView.Adapter<ForecastItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
@@ -44,7 +44,13 @@ class ForecastItemAdapter(
             binding.card.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 setSelected(adapterPosition)
-                listener(forecast, adapterPosition)
+                clickListener(forecast, adapterPosition, false)
+            }
+            binding.card.setOnLongClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+                setSelected(adapterPosition)
+                clickListener(forecast, adapterPosition, true)
+                return@setOnLongClickListener true
             }
         }
 
