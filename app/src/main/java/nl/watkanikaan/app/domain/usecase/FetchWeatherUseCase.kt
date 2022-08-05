@@ -26,9 +26,8 @@ class FetchWeatherUseCase @Inject constructor(
         val weather = response.data ?: return@map response
 
         // convert temperature to windchill temperature
-        val updatedResponse = weather.copy(forecast = weather.forecast.mapValues {
-            val entry = it.value
-            entry.copy(windChillTemp = windChill(entry.windChillTemp, entry.windSpeed))
+        val updatedResponse = weather.copy(forecast = weather.forecast.map {
+            it.copy(windChillTemp = windChill(it.windChillTemp, it.windSpeed))
         })
 
         return@map response.map(updatedResponse)

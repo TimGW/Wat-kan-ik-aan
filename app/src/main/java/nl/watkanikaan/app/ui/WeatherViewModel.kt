@@ -9,9 +9,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import nl.watkanikaan.app.domain.model.Profile
+import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
@@ -26,6 +27,8 @@ class WeatherViewModel @Inject constructor(
     private val calcRecommendationUseCase: CalcRecommendationUseCase,
     private val updateLocationUseCase: UpdateLocationUseCase,
 ) : ViewModel() {
+    private var selectedMovement: Movement = Movement.Rest
+    private var selectedForecast: Weather.Forecast? = null
 
     private val _weather = MutableStateFlow<Result<Weather?>>(Result.Loading(null))
     val weather: StateFlow<Result<Weather?>> = _weather.asStateFlow()
@@ -37,45 +40,25 @@ class WeatherViewModel @Inject constructor(
     val toolbar: LiveData<Int> = _toolbar
 
     init {
-        fetchWeatherRecommendation()
+        fetchWeather()
     }
 
     fun refresh() {
-        fetchWeatherRecommendation(isRefreshed = true)
+        fetchWeather(isRefreshed = true)
     }
 
-    private fun fetchWeatherRecommendation(
-        isRefreshed: Boolean? = null
+    fun selectDay(
+        forecast: Weather.Forecast,
     ) = viewModelScope.launch {
-        fetchWeatherUseCase.execute(
-            FetchWeatherUseCase.Params(forceRefresh = isRefreshed)
-        ).collect { result: Result<Weather?> ->
-            val data: Weather? = result.data
-
-            if (isRefreshed == true) _weather.value = result else _weather.update { result }
-
-            val now = Weather.Day.NOW
-            data?.forecast?.get(now)?.let { executeRecommendation(now, it) }
-        }
+        selectedForecast = forecast
+        executeRecommendation(forecast = forecast)
     }
 
-    fun updateRecommendation(
-        day: Weather.Day,
-        weather: Weather.Forecast,
+    fun selectMovement(
+        movement: Movement
     ) = viewModelScope.launch {
-        _weather.value.data?.let { executeRecommendation(day, weather) }
-    }
-
-    private suspend fun executeRecommendation(
-        day: Weather.Day,
-        weather: Weather.Forecast,
-        movement: Profile.Movement? = null
-    ) {
-        calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(day, weather, movement)
-        ).collect { result ->
-            _recommendation.value = result
-        }
+        selectedMovement = movement
+        executeRecommendation(movement = movement)
     }
 
     fun updateToolbarTitle(selectedDay: Weather.Day) {
@@ -86,12 +69,51 @@ class WeatherViewModel @Inject constructor(
         updateLocationUseCase.execute(UpdateLocationUseCase.Params(location))
     }
 
-    fun recalculateRecommendation(
-        day: Weather.Day,
-        movement: Profile.Movement
-    ) = viewModelScope.launch {
-        val forecast = weather.value.data?.forecast?.get(day) ?: return@launch
-        _weather.value.data?.let { executeRecommendation(day, forecast, movement) }
+    fun refreshRecommendation() = viewModelScope.launch {
+        executeRecommendation()
     }
 
+    private fun fetchWeather(
+        isRefreshed: Boolean = false
+    ) = viewModelScope.launch {
+        fetchWeatherUseCase.execute(
+            FetchWeatherUseCase.Params(forceRefresh = isRefreshed)
+        ).debounce {
+            if (!isRefreshed) 0L else TIMEOUT
+        }.collect { result: Result<Weather?> ->
+            val forecast: List<Weather.Forecast>? = result.data?.forecast
+
+            if (isRefreshed) {
+                _weather.update { result }
+
+                forecast
+                    ?.find { it.day == selectedForecast?.day }
+                    ?.also { executeRecommendation(forecast = it) }
+            } else {
+                _weather.value = result
+
+                forecast
+                    ?.find { it.day == Weather.Day.NOW }
+                    ?.also { executeRecommendation(forecast = it, movement = Movement.Rest) }
+            }
+        }
+    }
+
+    private suspend fun executeRecommendation(
+        forecast: Weather.Forecast? = null,
+        movement: Movement? = null
+    ) {
+        val f = forecast ?: selectedForecast ?: _weather.value.data?.forecast?.first() ?: return
+        val m = movement ?: selectedMovement
+
+        calcRecommendationUseCase.execute(
+            CalcRecommendationUseCase.Params(f, m)
+        ).collect { result ->
+            _recommendation.value = result
+        }
+    }
+
+    companion object {
+        private const val TIMEOUT = 5000L
+    }
 }

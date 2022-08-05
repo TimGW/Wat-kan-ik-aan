@@ -14,6 +14,18 @@ class OffsetDecoration(private val itemOffset: Int) : ItemDecoration() {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        outRect.set(itemOffset, itemOffset, itemOffset, itemOffset)
+
+        val itemPosition = parent.getChildAdapterPosition(view)
+        if (itemPosition == RecyclerView.NO_POSITION) return
+        val itemCount = state.itemCount
+
+        val isFirstItem = itemPosition == 0
+        val isLastItem = itemCount > 0 && itemPosition == itemCount - 1
+
+        when {
+            isFirstItem -> outRect.set(0, itemOffset, itemOffset, itemOffset)
+            isLastItem -> outRect.set(itemOffset, itemOffset, 0, itemOffset)
+            else -> outRect.set(itemOffset, itemOffset, itemOffset, itemOffset)
+        }
     }
 }

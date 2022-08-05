@@ -24,6 +24,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -36,6 +37,7 @@ import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
 import nl.watkanikaan.app.databinding.LayoutChipsMovementBinding
 import nl.watkanikaan.app.databinding.LayoutContentBinding
+import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
@@ -46,20 +48,13 @@ import java.util.*
 
 @AndroidEntryPoint
 class WeatherFragment : Fragment(), MenuProvider {
-    private val viewModel: WeatherViewModel by activityViewModels()
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var movementBinding: LayoutChipsMovementBinding
     private lateinit var contentBinding: LayoutContentBinding
     private lateinit var weatherAdapter: WeatherItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var selectedForecast: Weather.Forecast? = null
-    private var selectedDay: Weather.Day = Weather.Day.NOW
-    private var selectedMovement: Profile.Movement = Profile.Movement.Rest
-    private val refresh by lazy {
-        throttleFirst(THROTTLE_LIMIT, lifecycleScope, viewModel::refresh) {
-            binding.swiperefresh.isRefreshing = false
-        }
-    }
+    private var selectedPosition: Int = 0
+    private val viewModel: WeatherViewModel by activityViewModels()
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -72,19 +67,11 @@ class WeatherFragment : Fragment(), MenuProvider {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(BUNDLE_EXTRA_SELECTED_POS, selectedDay)
+        outState.putInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        activity?.onBackPressedDispatcher?.addCallback(this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    activity?.finish()
-                }
-            })
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -95,10 +82,13 @@ class WeatherFragment : Fragment(), MenuProvider {
     ): View {
         binding = FragmentWeatherBinding.inflate(layoutInflater)
         val root = binding.root
+
         movementBinding = LayoutChipsMovementBinding.bind(root)
         contentBinding = LayoutContentBinding.bind(root)
+
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         return root
     }
 
@@ -106,17 +96,25 @@ class WeatherFragment : Fragment(), MenuProvider {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState != null) {
-            selectedDay = savedInstanceState.getParcelable(BUNDLE_EXTRA_SELECTED_POS) ?: selectedDay
+            selectedPosition = savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
         }
 
-        binding.swiperefresh.setOnRefreshListener(refresh)
+        binding.swiperefresh.setOnRefreshListener(viewModel::refresh)
+
+        movementBinding.chipRestMovement.setOnClickListener {
+            viewModel.selectMovement(Movement.Rest)
+        }
+        movementBinding.chipLightMovement.setOnClickListener {
+            viewModel.selectMovement(Movement.Light)
+        }
+        movementBinding.chipHeavyMovement.setOnClickListener {
+            viewModel.selectMovement(Movement.Heavy)
+        }
 
         binding.weatherRv.apply {
-            weatherAdapter = WeatherItemAdapter(selectedDay) { day, forecast ->
-                selectedDay = day
-                selectedForecast = forecast
-                viewModel.updateRecommendation(day, forecast)
-//                viewModel.recalculateRecommendation()
+            weatherAdapter = WeatherItemAdapter(selectedPosition) { forecast, position ->
+                selectedPosition = position
+                viewModel.selectDay(forecast)
             }
             adapter = weatherAdapter
             layoutManager = FlexboxLayoutManager(
@@ -135,16 +133,11 @@ class WeatherFragment : Fragment(), MenuProvider {
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
+    }
 
-        movementBinding.chipNoMovement.setOnClickListener {
-            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Rest)
-        }
-        movementBinding.chipLightMovement.setOnClickListener {
-            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Light)
-        }
-        movementBinding.chipHeavyMovement.setOnClickListener {
-            viewModel.recalculateRecommendation(selectedDay, Profile.Movement.Heavy)
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshRecommendation()
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -252,7 +245,6 @@ class WeatherFragment : Fragment(), MenuProvider {
     ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
-        const val THROTTLE_LIMIT = 60L * 1000L
         const val BUNDLE_EXTRA_SELECTED_POS = "BUNDLE_EXTRA_SELECTED_POS"
     }
 }
