@@ -4,9 +4,9 @@ import com.squareup.moshi.FromJson
 import nl.watkanikaan.app.data.model.WeatherEntity
 import nl.watkanikaan.app.data.model.WeatherJson
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.ui.or
-import nl.watkanikaan.app.ui.toDoubleOr
-import nl.watkanikaan.app.ui.toIntOr
+import nl.watkanikaan.app.presentation.or
+import nl.watkanikaan.app.presentation.toDoubleOr
+import nl.watkanikaan.app.presentation.toIntOr
 import java.text.ParseException
 import java.time.LocalDateTime
 import java.time.LocalTime

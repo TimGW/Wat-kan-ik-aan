@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui.forecast
+package nl.watkanikaan.app.presentation.forecast
 
 import android.graphics.Rect
 import android.view.View

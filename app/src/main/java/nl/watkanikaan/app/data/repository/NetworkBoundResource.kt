@@ -2,9 +2,14 @@ package nl.watkanikaan.app.data.repository
 
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import nl.watkanikaan.app.domain.repository.ErrorHandler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import nl.watkanikaan.app.domain.model.Result
-import kotlinx.coroutines.flow.*
 import retrofit2.Response
 
 /**
@@ -19,7 +24,7 @@ import retrofit2.Response
 abstract class NetworkBoundResource<RequestType, ResultType>(
     private val errorHandler: ErrorHandler,
 ) {
-    fun asFlow() = flow {
+    fun asFlow(networkDispatcher: CoroutineDispatcher) = flow {
         emit(Result.Loading(null)) // start loading state immediately
         val cachedData = fetchFromLocal().firstOrNull()
 
@@ -46,7 +51,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         } catch (e: Exception) {
             emitAll(fetchFromLocal().map { Result.Error(errorHandler.getError(e), it) })
         }
-    }
+    }.flowOn(networkDispatcher)
 
     @WorkerThread
     protected abstract suspend fun saveRemoteData(response: RequestType)

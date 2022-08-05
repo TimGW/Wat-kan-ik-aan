@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.os.Build
 import android.os.Bundle
@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.ActivityMainBinding
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.ui.theme.ThemeHelper
+import nl.watkanikaan.app.presentation.theme.ThemeHelper
 import java.util.*
 import javax.inject.Inject
 

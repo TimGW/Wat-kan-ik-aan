@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/weatherFragment"
-        android:name="nl.watkanikaan.app.ui.WeatherFragment"
+        android:name="nl.watkanikaan.app.presentation.WeatherFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_weather">
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="nl.watkanikaan.app.ui.SettingsFragment"
+        android:name="nl.watkanikaan.app.presentation.SettingsFragment"
         android:label="@string/title_settings" />
 
     <!-- Global actions -->

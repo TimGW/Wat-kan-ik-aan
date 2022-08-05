@@ -20,19 +20,19 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
 import java.time.LocalDate
 
-class CalcRecommendationUseCaseTest {
+class CalcRecommendationUseCaseImplTest {
     private val sharedPrefs: SharedPref = mock()
     private val anyForecast =
         Weather.Forecast(null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I, ANY_I, ANY_I)
-    private val setup: (CoroutineDispatcher) -> CalcRecommendationUseCase = {
+    private val setup: (CoroutineDispatcher) -> CalcRecommendationUseCaseImpl = {
         `when`(sharedPrefs.getProfile()).thenReturn(Profile())
-        CalcRecommendationUseCase(it, sharedPrefs)
+        CalcRecommendationUseCaseImpl(it, sharedPrefs)
     }
 
     @Test
     fun testJacket_above20degrees_nojacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -42,7 +42,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testJacket_above15degreesHighDewPoint_noJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(dewPoint = 20, windChillTemp = 15.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -52,7 +52,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testJacket_above15degreesNoDewPoint_summerJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -62,7 +62,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testJacket_above10degrees_normalJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 10.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -72,7 +72,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testJacket_under10degrees_winterJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 9.9)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -82,7 +82,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testTop_under10degrees_sweater() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 9.9)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -92,7 +92,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testTop_above10degrees_vest() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 10.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -102,7 +102,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testTop_above15degrees_tshirt() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -112,7 +112,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testBottom_under15degrees_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 14.9)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -122,7 +122,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testBottom_above15degreesMuggy_shorts() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0, dewPoint = 20)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -132,7 +132,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testBottom_above15degreesNotMuggy_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -142,7 +142,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testBottom_above20degrees_short() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -152,7 +152,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testBottom_above20degreesRaining_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windChillTemp = 20.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -162,7 +162,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isMuggy_showMuggyMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(dewPoint = 20)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -172,7 +172,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isSunny_showSunnyMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfSun = 100)
-        val params = CalcRecommendationUseCase.Params(
+        val params = CalcRecommendationUseCaseImpl.Params(
             Weather.Day.DAY_AFTER_TOMORROW,
             forecast,
             movement
@@ -186,7 +186,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isFreezing_showFreezingMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 5.0)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -196,7 +196,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isRainingHighWind_showWindyRainMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windForce = 5)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -206,7 +206,7 @@ class CalcRecommendationUseCaseTest {
     @Test
     fun testExtras_isRainingLowWind_showRainMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windForce = 4)
-        val params = CalcRecommendationUseCase.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -222,7 +222,7 @@ class CalcRecommendationUseCaseTest {
             chanceOfPrecipitation = 100,
             windForce = 4,
         )
-        val params = CalcRecommendationUseCase.Params(
+        val params = CalcRecommendationUseCaseImpl.Params(
             Weather.Day.DAY_AFTER_TOMORROW,
             forecast,
             movement

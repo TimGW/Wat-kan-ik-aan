@@ -15,12 +15,12 @@ import org.mockito.Mockito.any
 import org.mockito.kotlin.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FetchWeatherUseCaseTest {
+class FetchWeatherUseCaseImplTest {
     private val repository: WeatherRepository = mock()
     private val sharedPrefs: SharedPref = mock()
-    private val setup: () -> FetchWeatherUseCase = {
+    private val setup: () -> FetchWeatherUseCaseImpl = {
         `when`(sharedPrefs.getLocationSetting()).thenReturn("1.1,2.2")
-        FetchWeatherUseCase(repository, sharedPrefs)
+        FetchWeatherUseCaseImpl(repository, sharedPrefs)
     }
     private val anyForecasts = mapOf(
         Weather.Day.NOW to Weather.Forecast(
@@ -41,7 +41,7 @@ class FetchWeatherUseCaseTest {
     fun testUseCase_callsRepo() {
         val forceRefresh = false
 
-        setup().execute(FetchWeatherUseCase.Params(forceRefresh))
+        setup().execute(FetchWeatherUseCaseImpl.Params(forceRefresh))
 
         Mockito.verify(repository).fetchWeather("1.1,2.2", false)
     }
@@ -62,7 +62,7 @@ class FetchWeatherUseCaseTest {
             )
         })
 
-        setup().execute(FetchWeatherUseCase.Params(forceRefresh)).collect {
+        setup().execute(FetchWeatherUseCaseImpl.Params(forceRefresh)).collect {
             assertEquals(21.0, (it as Result.Success).data?.forecast?.values?.first()?.windChillTemp)
         }
     }

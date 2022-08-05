@@ -1,19 +1,19 @@
 package nl.watkanikaan.app.domain.usecase
 
 import android.location.Location
-import nl.watkanikaan.app.data.local.DefaultSharedPrefs
 import nl.watkanikaan.app.data.local.SharedPref
+import nl.watkanikaan.app.domain.usecase.marker.UpdateLocationUseCase
 import javax.inject.Inject
 
-class UpdateLocationUseCase @Inject constructor(
+class UpdateLocationUseCaseImpl @Inject constructor(
     private val defaultSharedPrefs: SharedPref // todo use repository & encypted sharedPref
-) : UseCase<UpdateLocationUseCase.Params, Unit> {
+) : UpdateLocationUseCase {
 
     data class Params(val location: Location)
 
     override fun execute(
         params: Params
     ) {
-       defaultSharedPrefs.setLocationSetting(params.location.latitude, params.location.longitude)
+        defaultSharedPrefs.setLocationSetting(params.location.latitude, params.location.longitude)
     }
 }

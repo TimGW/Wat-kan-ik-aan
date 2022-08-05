@@ -14,14 +14,15 @@ import nl.watkanikaan.app.domain.model.Recommendation.Extra
 import nl.watkanikaan.app.domain.model.Recommendation.Jacket
 import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
+import nl.watkanikaan.app.domain.usecase.marker.CalcRecommendationUseCase
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
-class CalcRecommendationUseCase @Inject constructor(
+class CalcRecommendationUseCaseImpl @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val sharedPrefs: SharedPref,
-) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
+) : CalcRecommendationUseCase {
 
     data class Params(
         val forecast: Weather.Forecast,

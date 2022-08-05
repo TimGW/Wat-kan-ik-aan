@@ -1,14 +1,12 @@
 package nl.watkanikaan.app.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import nl.watkanikaan.app.data.local.WeatherDao
 import nl.watkanikaan.app.data.model.WeatherEntity
 import nl.watkanikaan.app.data.remote.WeatherService
 import nl.watkanikaan.app.domain.model.IoDispatcher
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.domain.repository.ErrorHandler
 import nl.watkanikaan.app.domain.repository.WeatherRepository
 import retrofit2.Response
 import java.util.concurrent.TimeUnit
@@ -18,6 +16,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherService: WeatherService,
     private val weatherDao: WeatherDao,
     private val errorHandler: ErrorHandler,
+    private val weatherMapper: WeatherMapper,
     @IoDispatcher private val networkDispatcher: CoroutineDispatcher,
 ) : WeatherRepository {
 
@@ -33,8 +32,8 @@ class WeatherRepositoryImpl @Inject constructor(
             weatherDao.insertWithTimestamp(response)
         }
 
-        override fun fetchFromLocal() = weatherDao.getWeatherDistinctUntilChanged().map {
-            it?.toWeather()
+        override fun fetchFromLocal() = weatherDao.getWeatherDistinctUntilChanged().mapNotNull {
+            weatherMapper.mapIncoming(it)
         }
 
         override suspend fun fetchFromRemote(): Response<WeatherEntity> {
@@ -47,7 +46,7 @@ class WeatherRepositoryImpl @Inject constructor(
         ): Boolean {
             return (data == null || forceRefresh == true || isWeatherStale(data.modifiedAt))
         }
-    }.asFlow().flowOn(networkDispatcher)
+    }.asFlow(networkDispatcher)
 
     private fun isWeatherStale(lastUpdated: Long?): Boolean {
         val interval = TimeUnit.HOURS.toMillis(REFRESH_HOURLY_INTERVAL)

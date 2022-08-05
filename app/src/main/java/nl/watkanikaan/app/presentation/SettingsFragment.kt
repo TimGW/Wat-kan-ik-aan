@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.os.Bundle
 import android.text.InputFilter
@@ -14,7 +14,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.data.local.SharedPref
-import nl.watkanikaan.app.ui.theme.ThemeHelper
+import nl.watkanikaan.app.presentation.theme.ThemeHelper
 import javax.inject.Inject
 
 

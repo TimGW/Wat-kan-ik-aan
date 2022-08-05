@@ -1,9 +1,8 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.content.Context
 import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.lifecycle.Lifecycle
@@ -12,8 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 fun LifecycleOwner.launchAfter(

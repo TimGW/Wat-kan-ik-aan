@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.location.Location
 import androidx.lifecycle.LiveData
@@ -17,9 +17,12 @@ import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.domain.usecase.CalcRecommendationUseCase
-import nl.watkanikaan.app.domain.usecase.FetchWeatherUseCase
-import nl.watkanikaan.app.domain.usecase.UpdateLocationUseCase
+import nl.watkanikaan.app.domain.usecase.CalcRecommendationUseCaseImpl
+import nl.watkanikaan.app.domain.usecase.FetchWeatherUseCaseImpl
+import nl.watkanikaan.app.domain.usecase.UpdateLocationUseCaseImpl
+import nl.watkanikaan.app.domain.usecase.marker.CalcRecommendationUseCase
+import nl.watkanikaan.app.domain.usecase.marker.FetchWeatherUseCase
+import nl.watkanikaan.app.domain.usecase.marker.UpdateLocationUseCase
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -72,7 +75,7 @@ class WeatherViewModel @Inject constructor(
     }
 
     fun updateLocation(location: Location) {
-        updateLocationUseCase.execute(UpdateLocationUseCase.Params(location))
+        updateLocationUseCase.execute(UpdateLocationUseCaseImpl.Params(location))
     }
 
     fun refreshRecommendation() = viewModelScope.launch {
@@ -93,7 +96,7 @@ class WeatherViewModel @Inject constructor(
     }
 
     private suspend fun collectWeatherFlow(forceRefresh: Boolean) = fetchWeatherUseCase.execute(
-        FetchWeatherUseCase.Params(forceRefresh = forceRefresh)
+        FetchWeatherUseCaseImpl.Params(forceRefresh = forceRefresh)
     ).collect { result: Result<Weather?> ->
         val forecast: List<Weather.Forecast>? = result.data?.forecast
 
@@ -125,7 +128,7 @@ class WeatherViewModel @Inject constructor(
         val m = movement ?: selectedMovement
 
         calcRecommendationUseCase.execute(
-            CalcRecommendationUseCase.Params(f, m)
+            CalcRecommendationUseCaseImpl.Params(f, m)
         ).collect { result ->
             _recommendation.value = result
         }

@@ -6,14 +6,15 @@ import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.repository.WeatherRepository
+import nl.watkanikaan.app.domain.usecase.marker.FetchWeatherUseCase
 import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.round
 
-class FetchWeatherUseCase @Inject constructor(
+class FetchWeatherUseCaseImpl @Inject constructor(
     private val repository: WeatherRepository,
     defaultSharedPrefs: SharedPref,
-) : UseCase<FetchWeatherUseCase.Params, Flow<@JvmSuppressWildcards Result<Weather?>>> {
+) : FetchWeatherUseCase {
     private val location = defaultSharedPrefs.getLocationSetting()
 
     data class Params(val forceRefresh: Boolean? = null)

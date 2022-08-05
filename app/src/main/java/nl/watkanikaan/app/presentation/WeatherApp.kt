@@ -1,9 +1,9 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.HiltAndroidApp
-import nl.watkanikaan.app.ui.theme.ThemeHelper
+import nl.watkanikaan.app.presentation.theme.ThemeHelper
 import javax.inject.Inject
 
 @HiltAndroidApp

@@ -1,6 +1,6 @@
-package nl.watkanikaan.app.ui.theme
+package nl.watkanikaan.app.presentation.theme
 
-import nl.watkanikaan.app.ui.theme.ThemeHelperImpl.Companion.SAVED_NIGHT_VALUE
+import nl.watkanikaan.app.presentation.theme.ThemeHelperImpl.Companion.SAVED_NIGHT_VALUE
 
 interface ThemeHelper {
     fun getAppTheme(): Int?

@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -38,8 +38,8 @@ import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.ui.forecast.ForecastItemAdapter
-import nl.watkanikaan.app.ui.forecast.ForecastItemDecoration
+import nl.watkanikaan.app.presentation.forecast.ForecastItemAdapter
+import nl.watkanikaan.app.presentation.forecast.ForecastItemDecoration
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*

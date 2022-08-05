@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui.theme
+package nl.watkanikaan.app.presentation.theme
 
 import android.app.Application
 import android.content.Context

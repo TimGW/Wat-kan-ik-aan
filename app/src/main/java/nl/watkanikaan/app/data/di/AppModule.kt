@@ -14,24 +14,16 @@ import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.data.local.DefaultSharedPrefs
 import nl.watkanikaan.app.data.local.TypeConverterForecast
 import nl.watkanikaan.app.data.remote.WeatherJsonAdapter
-import nl.watkanikaan.app.data.repository.ErrorHandlerImpl
 import nl.watkanikaan.app.domain.model.MoshiDefault
 import nl.watkanikaan.app.domain.model.MoshiNetwork
-import nl.watkanikaan.app.domain.repository.ErrorHandler
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-/**
- * Module for all globally required dependencies
- */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
-
-    @Binds
-    abstract fun bindErrorHandler(errorHandlerImpl: ErrorHandlerImpl): ErrorHandler
 
     @Binds
     abstract fun bindSharedPrefs(defaultSharedPrefs: DefaultSharedPrefs): SharedPref

@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.domain.repository
+package nl.watkanikaan.app.data.repository
 
 import nl.watkanikaan.app.domain.model.Result
 

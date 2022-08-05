@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui.forecast
+package nl.watkanikaan.app.presentation.forecast
 
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import nl.watkanikaan.app.R
 import com.google.android.material.R as AndroidR
 import nl.watkanikaan.app.databinding.WeatherItemBinding
 import nl.watkanikaan.app.domain.model.Weather
-import nl.watkanikaan.app.ui.getThemeColor
+import nl.watkanikaan.app.presentation.getThemeColor
 import kotlin.math.roundToInt
 
 class ForecastItemAdapter(
