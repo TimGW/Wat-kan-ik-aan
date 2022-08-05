@@ -71,10 +71,6 @@ android {
     }
     buildFeatures {
         viewBinding true
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_version
     }
     packagingOptions {
         resources {
@@ -129,8 +125,6 @@ dependencies {
     // database
     implementation "androidx.room:room-runtime:2.4.2"
     implementation "androidx.room:room-ktx:2.4.2"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     kapt  "androidx.room:room-compiler:2.4.2"
 
     // Dependency Injection
