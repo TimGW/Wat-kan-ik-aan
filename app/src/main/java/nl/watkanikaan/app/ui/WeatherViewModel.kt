@@ -20,6 +20,7 @@ import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.usecase.CalcRecommendationUseCase
 import nl.watkanikaan.app.domain.usecase.FetchWeatherUseCase
 import nl.watkanikaan.app.domain.usecase.UpdateLocationUseCase
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -131,6 +132,6 @@ class WeatherViewModel @Inject constructor(
     }
 
     companion object {
-        private const val TIMEOUT = 10L * 1000L // 10 sec
+        private val TIMEOUT = TimeUnit.MINUTES.toMillis(5L)
     }
 }

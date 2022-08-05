@@ -1,11 +1,11 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.ui.forecast
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
-class OffsetDecoration(private val itemOffset: Int) : ItemDecoration() {
+class ForecastItemDecoration(private val itemOffset: Int) : ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,

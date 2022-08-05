@@ -1,4 +1,4 @@
-package nl.watkanikaan.app.ui
+package nl.watkanikaan.app.ui.forecast
 
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -6,15 +6,17 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import nl.watkanikaan.app.R
+import com.google.android.material.R as AndroidR
 import nl.watkanikaan.app.databinding.WeatherItemBinding
 import nl.watkanikaan.app.domain.model.Weather
+import nl.watkanikaan.app.ui.getThemeColor
 import kotlin.math.roundToInt
 
-class WeatherItemAdapter(
+class ForecastItemAdapter(
     private var selectedPosition: Int,
     private val weatherData: MutableList<Weather.Forecast> = mutableListOf(),
     private val listener: (Weather.Forecast, Int) -> Unit
-) : RecyclerView.Adapter<WeatherItemAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ForecastItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         WeatherItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -68,12 +70,12 @@ class WeatherItemAdapter(
             val contentColor: Int
             val strokeWidth: Int
             if (selectedPosition == adapterPosition) {
-                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer)
-                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)
+                cardColor = context.getThemeColor(AndroidR.attr.colorPrimaryContainer)
+                contentColor = context.getThemeColor(AndroidR.attr.colorOnPrimaryContainer)
                 strokeWidth = 0
             } else {
-                cardColor = context.getThemeColor(com.google.android.material.R.attr.colorSurface)
-                contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnSurface)
+                cardColor = context.getThemeColor(AndroidR.attr.colorSurface)
+                contentColor = context.getThemeColor(AndroidR.attr.colorOnSurface)
                 strokeWidth = context.resources.getDimensionPixelSize(R.dimen.card_stroke_width)
             }
 

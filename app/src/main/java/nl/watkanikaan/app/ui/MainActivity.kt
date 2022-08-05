@@ -19,9 +19,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private var navController: NavController? = null
-    private lateinit var binding: ActivityMainBinding
     private val viewModel: WeatherViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
+    private var navController: NavController? = null
 
     @Inject
     lateinit var themeHelper: ThemeHelper
@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         }
         setupToolbar()
     }
+
+    override fun onSupportNavigateUp() =
+        getNavController().navigateUp() || super.onSupportNavigateUp()
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)

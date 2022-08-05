@@ -14,7 +14,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
@@ -22,9 +21,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -38,10 +35,11 @@ import nl.watkanikaan.app.databinding.FragmentWeatherBinding
 import nl.watkanikaan.app.databinding.LayoutChipsMovementBinding
 import nl.watkanikaan.app.databinding.LayoutContentBinding
 import nl.watkanikaan.app.domain.model.Movement
-import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
+import nl.watkanikaan.app.ui.forecast.ForecastItemAdapter
+import nl.watkanikaan.app.ui.forecast.ForecastItemDecoration
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,7 +49,7 @@ class WeatherFragment : Fragment(), MenuProvider {
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var movementBinding: LayoutChipsMovementBinding
     private lateinit var contentBinding: LayoutContentBinding
-    private lateinit var weatherAdapter: WeatherItemAdapter
+    private lateinit var forecastAdapter: ForecastItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedPosition: Int = 0
     private val viewModel: WeatherViewModel by activityViewModels()
@@ -112,11 +110,11 @@ class WeatherFragment : Fragment(), MenuProvider {
         }
 
         binding.weatherRv.apply {
-            weatherAdapter = WeatherItemAdapter(selectedPosition) { forecast, position ->
+            forecastAdapter = ForecastItemAdapter(selectedPosition) { forecast, position ->
                 selectedPosition = position
                 viewModel.selectDay(forecast)
             }
-            adapter = weatherAdapter
+            adapter = forecastAdapter
             layoutManager = FlexboxLayoutManager(
                 requireContext(),
             ).apply {
@@ -127,7 +125,7 @@ class WeatherFragment : Fragment(), MenuProvider {
 
             overScrollMode = View.OVER_SCROLL_NEVER
             isNestedScrollingEnabled = false
-            addItemDecoration(OffsetDecoration(resources.getDimension(R.dimen.keyline_4).toInt()))
+            addItemDecoration(ForecastItemDecoration(resources.getDimension(R.dimen.keyline_4).toInt()))
         }
 
         viewModel.dismissLoader.observe(viewLifecycleOwner) {
@@ -176,7 +174,7 @@ class WeatherFragment : Fragment(), MenuProvider {
             .format(Date(weather.modifiedAt))
         binding.location.text = getString(R.string.location, weather.location)
         binding.lastUpdated.text = getString(R.string.last_updated, updatedAt)
-        weatherAdapter.updateItems(weather.forecast)
+        forecastAdapter.updateItems(weather.forecast)
     }
 
     private fun updateRecommendationUI(recommendation: Recommendation) {

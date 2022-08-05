@@ -104,7 +104,7 @@ class WeatherJsonAdapter {
         max: String?
     ): Double {
         val now = LocalDateTime.now().hour
-        return if (now > WARMEST_HOUR_OF_DAY || now < parseSunTime(sunUpAt)) {
+        return if (now >= WARMEST_HOUR_OF_DAY || now < parseSunTime(sunUpAt)) {
             min.toDoubleOr()
         } else {
             max.toDoubleOr()
@@ -112,6 +112,6 @@ class WeatherJsonAdapter {
     }
 
     companion object {
-        private const val WARMEST_HOUR_OF_DAY = 16
+        private const val WARMEST_HOUR_OF_DAY = 15
     }
 }
