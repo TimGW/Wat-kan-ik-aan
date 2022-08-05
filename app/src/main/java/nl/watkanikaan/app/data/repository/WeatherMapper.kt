@@ -4,11 +4,9 @@ import nl.watkanikaan.app.data.model.WeatherEntity
 import nl.watkanikaan.app.domain.model.Weather
 import javax.inject.Inject
 
-class WeatherMapper @Inject constructor(): Mapper<WeatherEntity?, Weather?> {
+class WeatherMapper @Inject constructor(): Mapper<WeatherEntity, Weather> {
 
-    override fun mapOutgoing(domain: Weather?): WeatherEntity? {
-        if (domain == null) return null
-
+    override fun mapOutgoing(domain: Weather): WeatherEntity {
         return WeatherEntity(
             modifiedAt = domain.modifiedAt,
             location = domain.location,
@@ -31,9 +29,7 @@ class WeatherMapper @Inject constructor(): Mapper<WeatherEntity?, Weather?> {
         )
     }
 
-    override fun mapIncoming(network: WeatherEntity?): Weather? {
-        if (network == null) return null
-
+    override fun mapIncoming(network: WeatherEntity): Weather {
         return Weather(
             modifiedAt = network.modifiedAt,
             location = network.location,

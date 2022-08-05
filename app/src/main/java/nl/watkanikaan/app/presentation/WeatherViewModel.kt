@@ -32,7 +32,7 @@ class WeatherViewModel @Inject constructor(
     private var selectedMovement: Movement = Movement.Rest
     private var selectedForecast: Weather.Forecast? = null
 
-    private val _isLoading = MutableLiveData(true)
+    private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> = _isLoading.distinctUntilChanged()
 
     private val _errorMessage = MutableLiveData<Int>()

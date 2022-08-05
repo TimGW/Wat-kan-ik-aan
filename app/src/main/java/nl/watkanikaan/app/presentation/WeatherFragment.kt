@@ -91,10 +91,9 @@ class WeatherFragment : Fragment(), MenuProvider {
         binding.loadingWeatherRv.loadingNow.loadingOverline.text = getText(R.string.now)
         binding.loadingWeatherRv.loadingToday.loadingOverline.text = getText(R.string.today)
         binding.loadingWeatherRv.loadingTomorrow.loadingOverline.text = getText(R.string.tomorrow)
-        binding.loadingWeatherRv.loadingDayAfterTomorrow.loadingOverline.text = getText(R.string.day_after_tomorrow)
-
+        binding.loadingWeatherRv.loadingDayAfterTomorrow.loadingOverline.text =
+            getText(R.string.day_after_tomorrow)
         binding.swiperefresh.setOnRefreshListener(viewModel::refresh)
-
         binding.chipsContainer.chipRestMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Rest)
         }
@@ -104,7 +103,6 @@ class WeatherFragment : Fragment(), MenuProvider {
         binding.chipsContainer.chipHeavyMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Heavy)
         }
-
         binding.weatherRv.apply {
             forecastAdapter =
                 ForecastItemAdapter(selectedPosition) { forecast, position, isLongClick ->
@@ -193,13 +191,13 @@ class WeatherFragment : Fragment(), MenuProvider {
             binding.root.snackbar(getString(it))
         }
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.swiperefresh.isRefreshing = isLoading
+            binding.swiperefresh.isRefreshing = false
             if (isLoading) {
-                binding.weatherRv.fadeTo(binding.loadingWeatherRv.root)
-                binding.content.root.fadeTo(binding.loadingContent.root)
+                binding.loadingWeatherRv.root.visibility = View.VISIBLE
+                binding.loadingContent.root.visibility = View.VISIBLE
             } else {
-                binding.loadingWeatherRv.root.fadeTo(binding.weatherRv)
-                binding.loadingContent.root.fadeTo(binding.content.root)
+                fadeIn(binding.loadingWeatherRv.root, binding.weatherRv)
+                fadeIn(binding.loadingContent.root, binding.content.root)
             }
         }
     }

@@ -20,7 +20,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindWeatherMapper(
         mapper: WeatherMapper
-    ): Mapper<WeatherEntity?, Weather?>
+    ): Mapper<WeatherEntity, Weather>
 
     @Binds
     abstract fun bindErrorHandler(

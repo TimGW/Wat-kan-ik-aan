@@ -59,7 +59,7 @@ fun Context.getThemeColor(@AttrRes res: Int): Int {
     return value.data
 }
 
-fun View.fadeTo(toView: View, duration: Long = 400L) {
+fun fadeIn(fromView: View, toView: View, duration: Long = 400L) {
     toView.apply {
         alpha = 0f
         visibility = View.VISIBLE
@@ -70,12 +70,12 @@ fun View.fadeTo(toView: View, duration: Long = 400L) {
             .setListener(null)
     }
 
-    this.animate()
+    fromView.animate()
         .alpha(0f)
         .setDuration(duration)
         .setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                this@fadeTo.visibility = View.INVISIBLE
+                fromView.visibility = View.INVISIBLE
             }
         })
 }

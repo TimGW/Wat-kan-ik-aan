@@ -16,7 +16,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherService: WeatherService,
     private val weatherDao: WeatherDao,
     private val errorHandler: ErrorHandler,
-    private val weatherMapper: WeatherMapper,
+    private val weatherMapper: Mapper<WeatherEntity, Weather>,
     @IoDispatcher private val networkDispatcher: CoroutineDispatcher,
 ) : WeatherRepository {
 
@@ -32,8 +32,8 @@ class WeatherRepositoryImpl @Inject constructor(
             weatherDao.insertWithTimestamp(response)
         }
 
-        override fun fetchFromLocal() = weatherDao.getWeatherDistinctUntilChanged().map {
-            weatherMapper.mapIncoming(it)
+        override fun fetchFromLocal() = weatherDao.getWeatherDistinctUntilChanged().map { entity ->
+            entity?.let {  weatherMapper.mapIncoming(it) }
         }
 
         override suspend fun fetchFromRemote(): Response<WeatherEntity> {
