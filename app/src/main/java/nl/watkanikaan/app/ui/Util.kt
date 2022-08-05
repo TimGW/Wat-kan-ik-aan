@@ -25,24 +25,6 @@ fun LifecycleOwner.launchAfter(
     }
 }
 
-fun throttleFirst(
-    skipMs: Long = 300L,
-    coroutineScope: CoroutineScope,
-    destinationFunction: () -> Unit,
-    finally: () -> Unit
-): () -> Unit {
-    var throttleJob: Job? = null
-    return {
-        if (throttleJob?.isCompleted != false) {
-            throttleJob = coroutineScope.launch {
-                destinationFunction.invoke()
-                delay(skipMs)
-            }
-        }
-        finally.invoke()
-    }
-}
-
 fun Context.toast(message: String) {
     Toast.makeText(
         this,
@@ -71,10 +53,6 @@ fun String?.toDoubleOr(input: Double = INVALID_DOUBLE): Double = this?.toDoubleO
 const val INVALID_STR = "-"
 const val INVALID_INT = -1
 const val INVALID_DOUBLE = -1.0
-
-fun <T, R> withNullable(receiver: T?, block: T.() -> R): R? {
-    return if(receiver == null) null else receiver.block()
-}
 
 fun Context.getThemeColor(@AttrRes res: Int): Int {
     val value = TypedValue()

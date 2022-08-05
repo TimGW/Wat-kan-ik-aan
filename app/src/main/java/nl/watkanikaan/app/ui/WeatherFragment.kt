@@ -130,6 +130,9 @@ class WeatherFragment : Fragment(), MenuProvider {
             addItemDecoration(OffsetDecoration(resources.getDimension(R.dimen.keyline_4).toInt()))
         }
 
+        viewModel.dismissLoader.observe(viewLifecycleOwner) {
+            binding.swiperefresh.isRefreshing = false
+        }
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
