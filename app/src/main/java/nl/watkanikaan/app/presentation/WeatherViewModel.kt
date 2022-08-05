@@ -4,14 +4,12 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Recommendation
@@ -23,7 +21,6 @@ import nl.watkanikaan.app.domain.usecase.UpdateLocationUseCaseImpl
 import nl.watkanikaan.app.domain.usecase.marker.CalcRecommendationUseCase
 import nl.watkanikaan.app.domain.usecase.marker.FetchWeatherUseCase
 import nl.watkanikaan.app.domain.usecase.marker.UpdateLocationUseCase
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,18 +29,20 @@ class WeatherViewModel @Inject constructor(
     private val calcRecommendationUseCase: CalcRecommendationUseCase,
     private val updateLocationUseCase: UpdateLocationUseCase,
 ) : ViewModel() {
-    private var throttleJob: Job? = null
     private var selectedMovement: Movement = Movement.Rest
     private var selectedForecast: Weather.Forecast? = null
 
-    private val _weather = MutableStateFlow<Result<Weather?>>(Result.Loading(null))
-    val weather: StateFlow<Result<Weather?>> = _weather.asStateFlow()
+    private val _isLoading = MutableLiveData(true)
+    val isLoading: LiveData<Boolean> = _isLoading.distinctUntilChanged()
+
+    private val _errorMessage = MutableLiveData<Int>()
+    val errorMessage: LiveData<Int> = _errorMessage.distinctUntilChanged()
+
+    private val _weather = MutableLiveData<Weather>()
+    val weather: LiveData<Weather> = _weather.distinctUntilChanged()
 
     private val _recommendation = MutableStateFlow<Recommendation?>(null)
     val recommendation: StateFlow<Recommendation?> = _recommendation.asStateFlow()
-
-    private val _dismissLoader = MutableLiveData<Unit>()
-    val dismissLoader: LiveData<Unit> = _dismissLoader
 
     private val _toolbar = MutableLiveData<Int>()
     val toolbar: LiveData<Int> = _toolbar
@@ -82,36 +81,27 @@ class WeatherViewModel @Inject constructor(
         executeRecommendation()
     }
 
-    private fun fetchWeather(
-        forceRefresh: Boolean = false
-    ) {
-        if (throttleJob?.isCompleted != false) {
-            throttleJob = viewModelScope.launch {
-                collectWeatherFlow(forceRefresh)
-                delay(if (forceRefresh) TIMEOUT else 0)
+    private fun fetchWeather(forceRefresh: Boolean = false) = viewModelScope.launch {
+        fetchWeatherUseCase.execute(
+            FetchWeatherUseCaseImpl.Params(forceRefresh = forceRefresh)
+        ).collect { result: Result<Weather?> ->
+            val error = result.error?.message
+            val weather = result.data
+            val forecast = weather?.forecast
+
+            _isLoading.value = result is Result.Loading && (weather == null && error == null)
+            weather?.let { _weather.value = it }
+            error?.let { _errorMessage.value = it }
+
+            if (forceRefresh) {
+                forecast
+                    ?.find { it.day == selectedForecast?.day }
+                    ?.also { executeRecommendation(forecast = it) }
+            } else {
+                forecast
+                    ?.find { it.day == Weather.Day.NOW }
+                    ?.also { executeRecommendation(forecast = it, movement = Movement.Rest) }
             }
-        } else {
-            _dismissLoader.value = Unit
-        }
-    }
-
-    private suspend fun collectWeatherFlow(forceRefresh: Boolean) = fetchWeatherUseCase.execute(
-        FetchWeatherUseCaseImpl.Params(forceRefresh = forceRefresh)
-    ).collect { result: Result<Weather?> ->
-        val forecast: List<Weather.Forecast>? = result.data?.forecast
-
-        if (forceRefresh) {
-            _weather.update { result }
-
-            forecast
-                ?.find { it.day == selectedForecast?.day }
-                ?.also { executeRecommendation(forecast = it) }
-        } else {
-            _weather.value = result
-
-            forecast
-                ?.find { it.day == Weather.Day.NOW }
-                ?.also { executeRecommendation(forecast = it, movement = Movement.Rest) }
         }
     }
 
@@ -119,7 +109,7 @@ class WeatherViewModel @Inject constructor(
         forecast: Weather.Forecast? = null,
         movement: Movement? = null
     ) {
-        val f = forecast ?: selectedForecast ?: _weather.value.data?.forecast?.first() ?: return
+        val f = forecast ?: selectedForecast ?: _weather.value?.forecast?.first() ?: return
         val m = movement ?: selectedMovement
 
         calcRecommendationUseCase.execute(
@@ -127,9 +117,5 @@ class WeatherViewModel @Inject constructor(
         ).collect { result ->
             _recommendation.value = result
         }
-    }
-
-    companion object {
-        private val TIMEOUT = TimeUnit.MINUTES.toMillis(5L)
     }
 }

@@ -15,20 +15,35 @@
 
         <include
             android:id="@+id/content"
-            layout="@layout/layout_content" />
+            layout="@layout/layout_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/chips_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            android:id="@+id/loading_content"
+            layout="@layout/layout_content_loading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/content"
+            app:layout_constraintEnd_toEndOf="@+id/content"
+            app:layout_constraintStart_toStartOf="@+id/content"
+            app:layout_constraintTop_toTopOf="@+id/content"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <include
+            android:id="@+id/chips_container"
+            layout="@layout/layout_chips_movement"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/rv_label"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/content">
-
-            <include layout="@layout/layout_chips_movement" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/rv_label"
@@ -36,9 +51,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/label_day"
-            app:layout_constraintBottom_toTopOf="@+id/weather_rv"
+            app:constraint_referenced_ids=""
+            app:layout_constraintBottom_toTopOf="@+id/bottom_barrier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottom_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="weather_rv, loading_weather_rv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -46,10 +71,7 @@
             android:id="@+id/weather_rv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:paddingVertical="4dp"
+            android:layout_marginBottom="48dp"
             android:scrollbarSize="0dp"
             android:scrollbars="none"
             app:layout_constraintBottom_toTopOf="@+id/location"
@@ -60,22 +82,37 @@
             tools:listitem="@layout/weather_item"
             tools:spanCount="4" />
 
+        <include
+            android:id="@+id/loading_weather_rv"
+            layout="@layout/layout_empty_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="48dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/location"
             style="@style/TextAppearance.MyTheme.BodySmall"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@string/location_empty"
             app:layout_constraintBottom_toTopOf="@+id/last_updated"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="locatie: 12:45" />
 
         <TextView
             android:id="@+id/last_updated"
             style="@style/TextAppearance.MyTheme.BodySmall"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@string/last_updated_empty"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="last updated: 12:45" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

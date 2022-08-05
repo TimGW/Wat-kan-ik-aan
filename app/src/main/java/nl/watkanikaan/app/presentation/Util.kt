@@ -1,5 +1,7 @@
 package nl.watkanikaan.app.presentation
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.TypedValue
 import android.view.View
@@ -55,4 +57,25 @@ fun Context.getThemeColor(@AttrRes res: Int): Int {
     val value = TypedValue()
     theme.resolveAttribute(res, value, true)
     return value.data
+}
+
+fun View.fadeTo(toView: View, duration: Long = 400L) {
+    toView.apply {
+        alpha = 0f
+        visibility = View.VISIBLE
+
+        animate()
+            .alpha(1f)
+            .setDuration(duration)
+            .setListener(null)
+    }
+
+    this.animate()
+        .alpha(0f)
+        .setDuration(duration)
+        .setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                this@fadeTo.visibility = View.INVISIBLE
+            }
+        })
 }

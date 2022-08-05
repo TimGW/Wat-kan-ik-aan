@@ -22,6 +22,7 @@
     <string name="tomorrow">Morgen</string>
     <string name="day_after_tomorrow">Overmorgen</string>
     <string name="last_updated">Laatste update: %1$s</string>
+    <string name="last_updated_empty">Laatste update: Geen</string>
     <string name="temperature">%1$s°C</string>
     <string name="menu_settings">Instellingen</string>
     <string name="title_settings">Instellingen</string>
@@ -114,6 +115,7 @@
     <string name="jacket_normal_rain">Regenjas</string>
     <string name="jacket_warm_rain">Dunne regenjas of poncho</string>
     <string name="location">Locatie: %1$s</string>
+    <string name="location_empty">Locatie: Onbekend</string>
     <string name="preferences_profile_age">Leeftijd</string>
     <string name="location_not_found">Geen locatie gevonden</string>
     <string name="location_permissions">Geen locatie permissies</string>

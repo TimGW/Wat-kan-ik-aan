@@ -25,7 +25,6 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
     private val errorHandler: ErrorHandler,
 ) {
     fun asFlow(networkDispatcher: CoroutineDispatcher) = flow {
-        emit(Result.Loading(null)) // start loading state immediately
         val cachedData = fetchFromLocal().firstOrNull()
 
         try {

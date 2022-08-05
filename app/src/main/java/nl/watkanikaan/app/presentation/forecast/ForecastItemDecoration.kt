@@ -23,9 +23,9 @@ class ForecastItemDecoration(private val itemOffset: Int) : ItemDecoration() {
         val isLastItem = itemCount > 0 && itemPosition == itemCount - 1
 
         when {
-            isFirstItem -> outRect.set(0, itemOffset, itemOffset, itemOffset)
-            isLastItem -> outRect.set(itemOffset, itemOffset, 0, itemOffset)
-            else -> outRect.set(itemOffset, itemOffset, itemOffset, itemOffset)
+            isFirstItem -> outRect.set(0, 0, itemOffset, 0)
+            isLastItem -> outRect.set(itemOffset, 0, 0, 0)
+            else -> outRect.set(itemOffset, 0, itemOffset, 0)
         }
     }
 }

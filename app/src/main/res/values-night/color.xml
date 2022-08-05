@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="color_alpha_20">#33FFFFFF</color>
+
     <color name="color_blue_primary">#bec2ff</color>
     <color name="color_blue_onPrimary">#0001ac</color>
     <color name="color_blue_primaryContainer">#0000ef</color>

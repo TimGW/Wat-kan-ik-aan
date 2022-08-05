@@ -33,11 +33,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
-import nl.watkanikaan.app.databinding.LayoutChipsMovementBinding
-import nl.watkanikaan.app.databinding.LayoutContentBinding
 import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Recommendation
-import nl.watkanikaan.app.domain.model.Result
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.presentation.forecast.ForecastItemAdapter
 import nl.watkanikaan.app.presentation.forecast.ForecastItemDecoration
@@ -48,8 +45,6 @@ import java.util.*
 @AndroidEntryPoint
 class WeatherFragment : Fragment(), MenuProvider {
     private lateinit var binding: FragmentWeatherBinding
-    private lateinit var movementBinding: LayoutChipsMovementBinding
-    private lateinit var contentBinding: LayoutContentBinding
     private lateinit var forecastAdapter: ForecastItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedPosition: Int = 0
@@ -80,15 +75,9 @@ class WeatherFragment : Fragment(), MenuProvider {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWeatherBinding.inflate(layoutInflater)
-        val root = binding.root
-
-        movementBinding = LayoutChipsMovementBinding.bind(root)
-        contentBinding = LayoutContentBinding.bind(root)
-
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,15 +88,20 @@ class WeatherFragment : Fragment(), MenuProvider {
                 savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
         }
 
+        binding.loadingWeatherRv.loadingNow.loadingOverline.text = getText(R.string.now)
+        binding.loadingWeatherRv.loadingToday.loadingOverline.text = getText(R.string.today)
+        binding.loadingWeatherRv.loadingTomorrow.loadingOverline.text = getText(R.string.tomorrow)
+        binding.loadingWeatherRv.loadingDayAfterTomorrow.loadingOverline.text = getText(R.string.day_after_tomorrow)
+
         binding.swiperefresh.setOnRefreshListener(viewModel::refresh)
 
-        movementBinding.chipRestMovement.setOnClickListener {
+        binding.chipsContainer.chipRestMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Rest)
         }
-        movementBinding.chipLightMovement.setOnClickListener {
+        binding.chipsContainer.chipLightMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Light)
         }
-        movementBinding.chipHeavyMovement.setOnClickListener {
+        binding.chipsContainer.chipHeavyMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Heavy)
         }
 
@@ -136,9 +130,6 @@ class WeatherFragment : Fragment(), MenuProvider {
             )
         }
 
-        viewModel.dismissLoader.observe(viewLifecycleOwner) {
-            binding.swiperefresh.isRefreshing = false
-        }
         observeWeather()
         observeRecommendation()
         getLocationUpdate()
@@ -147,11 +138,19 @@ class WeatherFragment : Fragment(), MenuProvider {
     private fun showForecastDialog(
         forecast: Weather.Forecast
     ) {
-        val title = getString(R.string.alert_dialog_forecast_title, getString(forecast.day.toText()).lowercase())
+        val title = getString(
+            R.string.alert_dialog_forecast_title,
+            getString(forecast.day.toText()).lowercase()
+        )
         val nl = "\n"
         val message = buildString {
             append(getString(R.string.alert_dialog_forecast_msg_temp, forecast.windChillTemp), nl)
-            append(getString(R.string.alert_dialog_forecast_msg_rain, forecast.chanceOfPrecipitation), nl)
+            append(
+                getString(
+                    R.string.alert_dialog_forecast_msg_rain,
+                    forecast.chanceOfPrecipitation
+                ), nl
+            )
             append(getString(R.string.alert_dialog_forecast_msg_sun, forecast.chanceOfSun), nl)
             append(getString(R.string.alert_dialog_forecast_msg_wind, forecast.windForce), nl)
             append(getString(R.string.alert_dialog_forecast_msg_sunup, forecast.sunUp), nl)
@@ -184,11 +183,24 @@ class WeatherFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun observeWeather() = launchAfter {
-        viewModel.weather.collect { result ->
-            if (result !is Result.Loading) binding.swiperefresh.isRefreshing = false
-            result.error?.message?.let { binding.root.snackbar(getString(it)) }
-            result.data?.let { updateWeather(it) }
+    private fun observeWeather() {
+        viewModel.weather.observe(viewLifecycleOwner) {
+            binding.swiperefresh.isRefreshing = false
+            updateWeather(it)
+        }
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
+            binding.swiperefresh.isRefreshing = false
+            binding.root.snackbar(getString(it))
+        }
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.swiperefresh.isRefreshing = isLoading
+            if (isLoading) {
+                binding.weatherRv.fadeTo(binding.loadingWeatherRv.root)
+                binding.content.root.fadeTo(binding.loadingContent.root)
+            } else {
+                binding.loadingWeatherRv.root.fadeTo(binding.weatherRv)
+                binding.loadingContent.root.fadeTo(binding.content.root)
+            }
         }
     }
 
@@ -210,17 +222,21 @@ class WeatherFragment : Fragment(), MenuProvider {
         with(recommendation) {
             viewModel.updateToolbarTitle(recommendation.selectedDay)
 
-            contentBinding.jacket.visibility = if (jacket?.type == null) {
+            binding.content.jacket.visibility = if (jacket?.type == null) {
                 View.GONE
             } else {
-                contentBinding.jacket.text = getString(jacket.type)
+                binding.content.jacket.text = getString(jacket.type)
                 View.VISIBLE
             }
-
-            contentBinding.top.text = getString(top.type)
-            contentBinding.bottom.text = getString(bottom.type)
-            contentBinding.extra.text = extras.joinToString("en, ") { extra ->
-                extra.message?.let { getString(it) }?.toString().orEmpty()
+            binding.content.top.text = getString(top.type)
+            binding.content.bottom.text = getString(bottom.type)
+            binding.content.extra.visibility = if (extras.isEmpty()) {
+                View.GONE
+            } else {
+                binding.content.extra.text = extras.joinToString("en, ") { extra ->
+                    extra.message?.let { getString(it) }?.toString().orEmpty()
+                }
+                View.VISIBLE
             }
         }
     }

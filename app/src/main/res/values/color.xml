@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--https://m3.material.io/styles/color/the-color-system/color-roles-->
+    <color name="color_alpha_20">#33000000</color>
 
     <color name="color_blue_primary">#343dff</color>
     <color name="color_blue_onPrimary">#FFFFFF</color>
