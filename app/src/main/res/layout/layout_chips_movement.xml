@@ -19,19 +19,20 @@
     <com.google.android.material.chip.ChipGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:checkedChip="@id/chip_no_movement"
+        app:checkedChip="@id/chip_rest_movement"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chipgroup_label"
         app:singleLine="true"
+        app:selectionRequired="true"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip_no_movement"
+            android:id="@+id/chip_rest_movement"
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/chip_movement_none" />
+            android:text="@string/chip_movement_rest" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_light_movement"

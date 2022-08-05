@@ -13,9 +13,34 @@
         android:padding="16dp"
         tools:context=".ui.MainActivity">
 
-        <include layout="@layout/layout_chips_movement" />
+        <include
+            android:id="@+id/content"
+            layout="@layout/layout_content" />
 
-        <include layout="@layout/layout_content" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/rv_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content">
+
+            <include layout="@layout/layout_chips_movement" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/rv_label"
+            style="@style/TextAppearance.MyTheme.LabelLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/label_day"
+            app:layout_constraintBottom_toTopOf="@+id/weather_rv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/weather_rv"
@@ -24,7 +49,7 @@
             android:layout_marginBottom="16dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:padding="4dp"
+            android:paddingVertical="4dp"
             android:scrollbarSize="0dp"
             android:scrollbars="none"
             app:layout_constraintBottom_toTopOf="@+id/location"

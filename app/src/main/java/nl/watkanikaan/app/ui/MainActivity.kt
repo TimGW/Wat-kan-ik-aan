@@ -58,10 +58,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = title
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return getNavController().navigateUp() || super.onSupportNavigateUp()
-    }
-
     private fun getNavController(): NavController {
         return if (navController == null) {
             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.domain.model.DefaultDispatcher
+import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Recommendation.Bottom
@@ -23,30 +24,28 @@ class CalcRecommendationUseCase @Inject constructor(
 ) : UseCase<CalcRecommendationUseCase.Params, Flow<Recommendation>> {
 
     data class Params(
-        val day: Weather.Day,
         val forecast: Weather.Forecast,
-        val movement: Profile.Movement?
+        val movement: Movement
     )
 
     override fun execute(
         params: Params
     ) = flow {
-        emit(createRecommendation(params.day, params.forecast, params.movement))
+        emit(createRecommendation(params.forecast, params.movement))
     }.flowOn(dispatcher)
 
     private fun createRecommendation(
-        day: Weather.Day,
         forecast: Weather.Forecast,
-        movement: Profile.Movement?
+        movement: Movement
     ): Recommendation {
         val temp = actuarialTemperature(sharedPrefs.getProfile(), forecast, movement)
 
         return Recommendation(
-            selectedDay = day,
+            selectedDay = forecast.day,
             jacket = determineJacket(temp, forecast),
             top = determineTop(temp),
             bottom = determineBottom(temp, forecast),
-            extras = determineExtras(day, temp, forecast)
+            extras = determineExtras(temp, forecast)
         )
     }
 
@@ -79,13 +78,12 @@ class CalcRecommendationUseCase @Inject constructor(
     }
 
     private fun determineExtras(
-        day: Weather.Day,
         temp: Double,
         forecast: Weather.Forecast,
     ): Set<Extra> {
         val result = mutableSetOf<Extra>()
         val isSunUp = LocalTime.now().hour in forecast.sunUp..forecast.sunUnder
-        val today = day == Weather.Day.NOW || day == Weather.Day.TODAY
+        val today = forecast.day == Weather.Day.NOW || forecast.day == Weather.Day.TODAY
 
         if (forecast.dewPoint.isMuggy()) result.add(Extra.MUGGY)
 
@@ -107,7 +105,7 @@ class CalcRecommendationUseCase @Inject constructor(
 fun actuarialTemperature(
     profile: Profile,
     forecast: Weather.Forecast,
-    movement: Profile.Movement?
+    movement: Movement
 ): Double {
     var addition = 0.0
 
@@ -117,8 +115,8 @@ fun actuarialTemperature(
         Profile.Thermoception.Warm -> addition += 2.5
     }
     when (movement) {
-        Profile.Movement.Light -> addition += 1.0
-        Profile.Movement.Heavy -> addition += 4.0
+        Movement.Light -> addition += 1.0
+        Movement.Heavy -> addition += 4.0
         else -> addition -= 1.0
     }
     if (profile.age >= 70) addition -= 2.0

@@ -11,9 +11,9 @@ import nl.watkanikaan.app.domain.model.Weather
 import kotlin.math.roundToInt
 
 class WeatherItemAdapter(
-    private var selectedDay: Weather.Day,
-    private val weatherData: MutableMap<Weather.Day, Weather.Forecast> = mutableMapOf(),
-    private val listener: (Weather.Day, Weather.Forecast) -> Unit
+    private var selectedPosition: Int,
+    private val weatherData: MutableList<Weather.Forecast> = mutableListOf(),
+    private val listener: (Weather.Forecast, Int) -> Unit
 ) : RecyclerView.Adapter<WeatherItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
@@ -21,35 +21,32 @@ class WeatherItemAdapter(
     )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val day = selectedDay.findDay(position) ?: return
-        val weather = weatherData[day] ?: return
-        holder.bind(day, weather)
+        val weather = weatherData[position]
+        holder.bind(weather)
     }
 
     override fun getItemCount() = weatherData.size
 
-    fun updateItems(weatherItems: Map<Weather.Day, Weather.Forecast>) {
+    fun updateItems(weatherItems: List<Weather.Forecast>) {
         weatherData.clear()
-        weatherData.putAll(weatherItems)
+        weatherData.addAll(weatherItems)
         notifyItemRangeChanged(0, weatherItems.size)
     }
 
     inner class ViewHolder(
         private val binding: WeatherItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        private lateinit var day: Weather.Day
         private lateinit var forecast: Weather.Forecast
 
         init {
             binding.card.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-                setSelected(selectedDay.findDay(adapterPosition))
-                listener(day, forecast)
+                setSelected(adapterPosition)
+                listener(forecast, adapterPosition)
             }
         }
 
-        fun bind(day: Weather.Day, forecast: Weather.Forecast) {
-            this.day = day
+        fun bind(forecast: Weather.Forecast) {
             this.forecast = forecast
 
             val context = binding.root.context
@@ -64,13 +61,13 @@ class WeatherItemAdapter(
                 ResourcesCompat.getDrawable(context.resources, R.drawable.refresh, null)
             }
             binding.icon.setImageDrawable(drawable)
-            binding.overline.text = context.getText(day.toText())
+            binding.overline.text = context.getText(forecast.day.toText())
             binding.underline.text = context.getString(R.string.temperature, forecast.windChillTemp.roundToInt().toString())
 
             val cardColor: Int
             val contentColor: Int
             val strokeWidth: Int
-            if (selectedDay == day) {
+            if (selectedPosition == adapterPosition) {
                 cardColor = context.getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer)
                 contentColor = context.getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)
                 strokeWidth = 0
@@ -88,11 +85,9 @@ class WeatherItemAdapter(
         }
     }
 
-    private fun setSelected(day: Weather.Day?) {
-        if (day == null) return
-
-        notifyItemChanged(selectedDay.position)
-        selectedDay = day
-        notifyItemChanged(selectedDay.position)
+    private fun setSelected(selected: Int) {
+        notifyItemChanged(selectedPosition)
+        selectedPosition = selected
+        notifyItemChanged(selectedPosition)
     }
 }

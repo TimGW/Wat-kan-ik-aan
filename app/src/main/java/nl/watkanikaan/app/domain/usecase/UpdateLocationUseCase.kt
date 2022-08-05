@@ -6,7 +6,7 @@ import nl.watkanikaan.app.data.local.SharedPref
 import javax.inject.Inject
 
 class UpdateLocationUseCase @Inject constructor(
-    private val defaultSharedPrefs: SharedPref // todo use repository
+    private val defaultSharedPrefs: SharedPref // todo use repository & encypted sharedPref
 ) : UseCase<UpdateLocationUseCase.Params, Unit> {
 
     data class Params(val location: Location)

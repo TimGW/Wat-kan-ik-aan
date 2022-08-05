@@ -1,7 +1,5 @@
 package nl.watkanikaan.app.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import nl.watkanikaan.app.R
 
 data class Weather(
@@ -9,19 +7,15 @@ data class Weather(
     val dayExpectation: String,
     val weatherAlarm: String,
     val modifiedAt: Long,
-    val forecast: Map<Day, Forecast>,
+    val forecast: List<Forecast>,
 ) {
 
-    @Parcelize
-    enum class Day(val position: Int) : Parcelable {
-        NOW(0),
-        TODAY(1),
-        TOMORROW(2),
-        DAY_AFTER_TOMORROW(3);
+    enum class Day {
+        NOW,
+        TODAY,
+        TOMORROW,
+        DAY_AFTER_TOMORROW;
 
-        fun findDay(position: Int) = values().find { it.position == position }
-
-        // todo remove from model and remove boolean
         fun toText() = when (this) {
             NOW -> R.string.now
             TODAY -> R.string.today
@@ -31,6 +25,7 @@ data class Weather(
     }
 
     data class Forecast(
+        val day: Day,
         val dewPoint: Int?,
         val weatherIcon: String,
         val windChillTemp: Double,

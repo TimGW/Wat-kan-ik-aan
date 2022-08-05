@@ -27,12 +27,13 @@ class WeatherJsonAdapter {
         )
     }
 
-    private fun WeatherJson.WeatherDataJson.expectationDbModel() = buildMap {
+    private fun WeatherJson.WeatherDataJson.expectationDbModel() = buildList {
         val sunUp = parseSunTime(sunUpAt)
         val sunUnder = parseSunTime(sunUnderAt)
 
-        put(
-            Weather.Day.NOW, WeatherEntity.Forecast(
+        add(
+            WeatherEntity.Forecast(
+                day = Weather.Day.NOW,
                 dewPoint = dewPoint?.toIntOrNull(),
                 weatherIcon = image.or(),
                 temperature = temperature.toDoubleOr(),
@@ -44,8 +45,9 @@ class WeatherJsonAdapter {
                 sunUnder = sunUnder,
             )
         )
-        put(
-            Weather.Day.TODAY, WeatherEntity.Forecast(
+        add(
+            WeatherEntity.Forecast(
+                day = Weather.Day.TODAY,
                 dewPoint = null,
                 weatherIcon = weatherIconToday.or(),
                 temperature = mapTempExpectation(sunUpAt, minTempToday, maxTempToday),
@@ -57,8 +59,9 @@ class WeatherJsonAdapter {
                 sunUnder = sunUnder,
             )
         )
-        put(
-            Weather.Day.TOMORROW, WeatherEntity.Forecast(
+        add(
+            WeatherEntity.Forecast(
+                day = Weather.Day.TOMORROW,
                 dewPoint = null,
                 weatherIcon = weatherIconTomorrow.or(),
                 temperature = maxTempTomorrow.toDoubleOr(),
@@ -70,8 +73,9 @@ class WeatherJsonAdapter {
                 sunUnder = sunUnder,
             )
         )
-        put(
-            Weather.Day.DAY_AFTER_TOMORROW, WeatherEntity.Forecast(
+        add(
+            WeatherEntity.Forecast(
+                day = Weather.Day.DAY_AFTER_TOMORROW,
                 dewPoint = null,
                 weatherIcon = weatherIconDayAfterTomorrow.or(),
                 temperature = maxTempDayAfterTomorrow.toDoubleOr(),
