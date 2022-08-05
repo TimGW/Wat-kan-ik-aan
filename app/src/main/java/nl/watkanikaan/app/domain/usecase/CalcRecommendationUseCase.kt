@@ -115,8 +115,8 @@ fun actuarialTemperature(
         Profile.Thermoception.Warm -> addition += 2.5
     }
     when (movement) {
-        Movement.Light -> addition += 1.0
-        Movement.Heavy -> addition += 4.0
+        Movement.Light -> addition += 3.0
+        Movement.Heavy -> addition += 5.0
         else -> addition -= 1.0
     }
     if (profile.age >= 70) addition -= 2.0
@@ -126,7 +126,8 @@ fun actuarialTemperature(
     return forecast.windChillTemp + addition.coerceIn(-7.0, 7.0)
 }
 
-fun Weather.Forecast.isSunny() = chanceOfSun >= 65 || weatherIcon == "zonnig"
+fun Weather.Forecast.isSunny() =
+    (weatherIcon == "zonnig" || weatherIcon == "halfbewolkt") && chanceOfSun >= 75
 
 fun Int?.isMuggy() = this != null && this >= 20 && LocalDate.now().isWarmMonth()
 
