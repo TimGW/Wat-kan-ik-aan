@@ -111,12 +111,7 @@ class WeatherViewModel @Inject constructor(
 
             forecast
                 ?.find { it.day == Weather.Day.NOW }
-                ?.also {
-                    executeRecommendation(
-                        forecast = it,
-                        movement = Movement.Rest
-                    )
-                }
+                ?.also { executeRecommendation(forecast = it, movement = Movement.Rest) }
         }
     }
 
