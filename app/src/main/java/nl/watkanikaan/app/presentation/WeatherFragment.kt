@@ -1,9 +1,9 @@
 package nl.watkanikaan.app.presentation
 
-import android.Manifest
+import android.Manifest.permission
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -14,8 +14,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -29,12 +27,12 @@ import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mittylabs.library.PermissionsHelper
 import dagger.hilt.android.AndroidEntryPoint
 import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.R
 import nl.watkanikaan.app.databinding.FragmentWeatherBinding
 import nl.watkanikaan.app.domain.model.Movement
-import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.presentation.forecast.ForecastItemAdapter
 import nl.watkanikaan.app.presentation.forecast.ForecastItemDecoration
@@ -43,30 +41,23 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class WeatherFragment : Fragment(), MenuProvider {
+class WeatherFragment : Fragment(), MenuProvider, PermissionsHelper.PermissionListener {
     private lateinit var binding: FragmentWeatherBinding
     private lateinit var forecastAdapter: ForecastItemAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedPosition: Int = 0
     private val viewModel: WeatherViewModel by activityViewModels()
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            getLocationUpdate()
-        } else {
-            showPermissionRationale { openSettings() }
-        }
-    }
+    private lateinit var permissionsHelper: PermissionsHelper
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        permissionsHelper = PermissionsHelper(context, this, permission.ACCESS_COARSE_LOCATION)
     }
 
     override fun onCreateView(
@@ -84,8 +75,9 @@ class WeatherFragment : Fragment(), MenuProvider {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState != null) {
-            selectedPosition =
-                savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
+            selectedPosition = savedInstanceState.getInt(BUNDLE_EXTRA_SELECTED_POS, selectedPosition)
+        } else {
+            permissionsHelper.check()
         }
 
         binding.loadingWeatherRv.loadingNow.loadingOverline.text = getText(R.string.now)
@@ -130,7 +122,6 @@ class WeatherFragment : Fragment(), MenuProvider {
 
         observeWeather()
         observeRecommendation()
-        getLocationUpdate()
     }
 
     private fun showForecastDialog(
@@ -164,7 +155,7 @@ class WeatherFragment : Fragment(), MenuProvider {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshRecommendation()
+        viewModel.refreshRecommendation()// fixme: is called while viewmodel resets to old state, so the recommendation doesn't match the weather
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -182,9 +173,13 @@ class WeatherFragment : Fragment(), MenuProvider {
     }
 
     private fun observeWeather() {
-        viewModel.weather.observe(viewLifecycleOwner) {
+        viewModel.weather.observe(viewLifecycleOwner) { weather ->
             binding.swiperefresh.isRefreshing = false
-            updateWeather(it)
+            val updatedAt = SimpleDateFormat("HH:mm", Locale.getDefault())
+                .format(Date(weather.modifiedAt))
+            binding.location.text = getString(R.string.location, weather.location)
+            binding.lastUpdated.text = getString(R.string.last_updated, updatedAt)
+            forecastAdapter.updateItems(weather.forecast)
         }
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = false
@@ -204,89 +199,64 @@ class WeatherFragment : Fragment(), MenuProvider {
 
     private fun observeRecommendation() = launchAfter {
         viewModel.recommendation.collect { result ->
-            result?.let { updateRecommendationUI(it) }
-        }
-    }
+            if (result == null) return@collect
 
-    private fun updateWeather(weather: Weather) {
-        val updatedAt = SimpleDateFormat("HH:mm", Locale.getDefault())
-            .format(Date(weather.modifiedAt))
-        binding.location.text = getString(R.string.location, weather.location)
-        binding.lastUpdated.text = getString(R.string.last_updated, updatedAt)
-        forecastAdapter.updateItems(weather.forecast)
-    }
+            with(result) {
+                viewModel.updateToolbarTitle(selectedDay)
 
-    private fun updateRecommendationUI(recommendation: Recommendation) {
-        with(recommendation) {
-            viewModel.updateToolbarTitle(recommendation.selectedDay)
-
-            binding.content.jacket.visibility = if (jacket?.type == null) {
-                View.GONE
-            } else {
-                binding.content.jacket.text = getString(jacket.type)
-                View.VISIBLE
-            }
-            binding.content.top.text = getString(top.type)
-            binding.content.bottom.text = getString(bottom.type)
-            binding.content.extra.visibility = if (extras.isEmpty()) {
-                View.GONE
-            } else {
-                binding.content.extra.text = extras.joinToString("en, ") { extra ->
-                    extra.message?.let { getString(it) }?.toString().orEmpty()
+                binding.content.jacket.visibility = if (jacket?.type == null) {
+                    View.GONE
+                } else {
+                    binding.content.jacket.text = getString(jacket.type)
+                    View.VISIBLE
                 }
-                View.VISIBLE
+                binding.content.top.text = getString(top.type)
+                binding.content.bottom.text = getString(bottom.type)
+                binding.content.extra.visibility = if (extras.isEmpty()) {
+                    View.GONE
+                } else {
+                    binding.content.extra.text = extras.joinToString("en, ") { extra ->
+                        extra.message?.let { getString(it) }?.toString().orEmpty()
+                    }
+                    View.VISIBLE
+                }
             }
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocationUpdate() {
-        if (checkPermissions()) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location == null) {
-                    view?.snackbar(message = getString(R.string.location_not_found))
-                } else {
-                    viewModel.updateLocation(location)
-                }
+    override fun onPermissionGranted() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location == null) {
+                view?.snackbar(message = getString(R.string.location_not_found))
+            } else {
+                viewModel.updateLocation(location)
             }
         }
     }
 
-    private fun showPermissionRationale(block: () -> Unit) {
+    override fun onPermissionRationale(permissionRequestAction: () -> Unit) {
         binding.root.snackbar(
             message = getString(R.string.location_permissions),
             actionMessage = getString(R.string.location_settings),
-            action = { block.invoke() })
+            action = { permissionRequestAction.invoke() })
     }
 
-    private fun openSettings() {
-        startActivity(Intent().apply {
-            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            addCategory(Intent.CATEGORY_DEFAULT)
-            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-        })
+    override fun onPermissionDenied() {
+        binding.root.snackbar(
+            message = getString(R.string.location_permissions),
+            actionMessage = getString(R.string.location_settings),
+            action = {
+                startActivity(Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    addCategory(Intent.CATEGORY_DEFAULT)
+                    data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                    addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                })
+            })
     }
-
-    private fun checkPermissions(): Boolean {
-        when {
-            isPermissionGranted() -> return true
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
-                showPermissionRationale {
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                }
-            }
-            else -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-        return false
-    }
-
-    private fun isPermissionGranted() = ContextCompat.checkSelfPermission(
-        requireContext(),
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
         const val BUNDLE_EXTRA_SELECTED_POS = "BUNDLE_EXTRA_SELECTED_POS"
