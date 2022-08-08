@@ -1,16 +1,44 @@
 name: "Fetch weather API updates and cache results"
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  report:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
       - name: "Update weather data"
         with:
           api-key: ${{ env.API_KEY }}
         run: |
           curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-key }}&locatie=Amsterdam
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@main
