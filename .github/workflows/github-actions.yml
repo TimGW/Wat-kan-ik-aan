@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-  schedule:
-    - cron: "*/5 * * * *"
+#  schedule:
+#    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,6 +35,11 @@ jobs:
         shell: bash
         run: |
           curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ env.API_KEY }}&locatie=Amsterdam
+          git config --global user.name ${{ env.GIT_USER }}
+          git config --global user.email ${{ env.GIT_EMAIL }}
+          git add "${{ inputs.project-directory }}/CHANGELOG.md"
+          git commit -m "Updated changelog with version ${{ github.event.pull_request.title }}"
+          git push
 
       - name: "Upload artifact"
         uses: actions/upload-pages-artifact@v1
