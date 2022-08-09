@@ -35,11 +35,14 @@ jobs:
       - name: "Update weather data"
         shell: bash
         run: |
-          WEATHER_DATA=$(curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam)
-          echo 'WEATHER_DATA<<EOF' >> $GITHUB_ENV
-          echo "$WEATHER_DATA" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-          echo $WEATHER_DATA >| "api/WEATHER_DATA.json"
+          curl --location --request GET 'https://api.getpostman.com/workspaces' --header 'X-API-Key: ${{ secrets.API_TOKEN }}' -o api/weather_data.json
+
+#          WEATHER_DATA=$(curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam)
+
+#          echo 'WEATHER_DATA<<EOF' >> $GITHUB_ENV
+#          echo "$WEATHER_DATA" >> $GITHUB_ENV
+#          echo 'EOF' >> $GITHUB_ENV
+#          echo $WEATHER_DATA >| "api/weather_data.json"
           git config --global user.name ${{ env.GIT_USER }}
           git config --global user.email ${{ env.GIT_EMAIL }}
           git add "api/WEATHER_DATA.json"
