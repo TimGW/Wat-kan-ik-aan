@@ -35,10 +35,10 @@ jobs:
       - name: "Update weather data"
         shell: bash
         run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > $HOME/api/weather_data.json
+          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ./api/weather_data.json
           git config --global user.name ${{ env.GIT_USER }}
           git config --global user.email ${{ env.GIT_EMAIL }}
-          git add "$HOME/api/WEATHER_DATA.json"
+          git add "./api/WEATHER_DATA.json"
           git commit -m "Updated weather data"
           git push
 
