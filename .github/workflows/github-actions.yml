@@ -34,8 +34,10 @@ jobs:
 
       - name: "Update weather data"
         shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.API_KEY }}
         run: |
-          WEATHER_DATA=$(curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ env.API_KEY }}&locatie=Amsterdam)
+          WEATHER_DATA=$(curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=$SUPER_SECRET&locatie=Amsterdam)
           echo 'WEATHER_DATA<<EOF' >> $GITHUB_ENV
           echo "$WEATHER_DATA" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
