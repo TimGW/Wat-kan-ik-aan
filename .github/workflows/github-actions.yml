@@ -1,4 +1,4 @@
-name: "Fetch weather API updates and cache results"
+name: Fetch weather API updates and cache results
 
 on:
   push:
@@ -8,8 +8,23 @@ on:
     - cron: "*/30 0-2,6-23 * * *"
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  update:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,60 +36,88 @@ jobs:
         with:
           url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=53.034325, 6.366893'
           method: 'GET'
-
-      - name: Fetch north west data
-        id: requestNW
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.553754, 4.822178'
-          method: 'GET'
-
-      - name: Fetch west data
-        id: requestW
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.022828, 4.706352'
-          method: 'GET'
-
-      - name: Fetch mid data
-        id: requestM
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.121877, 5.305695'
-          method: 'GET'
-
-      - name: Fetch east data
-        id: requestE
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.314997, 6.209913'
-          method: 'GET'
-
-      - name: Fetch south west data
-        id: requestSW
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=51.595863, 4.741467'
-          method: 'GET'
-
-      - name: Fetch south east data
-        id: requestSE
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=51.308874, 5.749949'
-          method: 'GET'
-
       - name: Update data files
         run: |
-          echo '${{ steps.requestN.outputs.response }}' > north.json
-          echo '${{ steps.requestNW.outputs.response }}' > north_west.json
-          echo '${{ steps.requestW.outputs.response }}' > west.json
-          echo '${{ steps.requestM.outputs.response }}' > mid.json
-          echo '${{ steps.requestE.outputs.response }}' > east.json
-          echo '${{ steps.requestSW.outputs.response }}' > south_west.json
-          echo '${{ steps.requestSE.outputs.response }}' > south_east.json
+          echo '${{ steps.requestN.outputs.response }}' > api/north.json
 
-      - name: Commit changed file
-        uses: EndBug/add-and-commit@v7
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          add: 'north.json north_west.json west.json mid.json east.json south_west.json south_east.json'
+          path: './api/north.json'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@main
+
+
+#jobs:
+#  update:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Fetch north data
+#        id: requestN
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=53.034325, 6.366893'
+#          method: 'GET'
+#
+#      - name: Fetch north west data
+#        id: requestNW
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.553754, 4.822178'
+#          method: 'GET'
+#
+#      - name: Fetch west data
+#        id: requestW
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.022828, 4.706352'
+#          method: 'GET'
+#
+#      - name: Fetch mid data
+#        id: requestM
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.121877, 5.305695'
+#          method: 'GET'
+#
+#      - name: Fetch east data
+#        id: requestE
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=52.314997, 6.209913'
+#          method: 'GET'
+#
+#      - name: Fetch south west data
+#        id: requestSW
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=51.595863, 4.741467'
+#          method: 'GET'
+#
+#      - name: Fetch south east data
+#        id: requestSE
+#        uses: fjogeleit/http-request-action@master
+#        with:
+#          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=51.308874, 5.749949'
+#          method: 'GET'
+#
+#      - name: Update data files
+#        run: |
+#          echo '${{ steps.requestN.outputs.response }}' > north.json
+#          echo '${{ steps.requestNW.outputs.response }}' > north_west.json
+#          echo '${{ steps.requestW.outputs.response }}' > west.json
+#          echo '${{ steps.requestM.outputs.response }}' > mid.json
+#          echo '${{ steps.requestE.outputs.response }}' > east.json
+#          echo '${{ steps.requestSW.outputs.response }}' > south_west.json
+#          echo '${{ steps.requestSE.outputs.response }}' > south_east.json
+#
+#      - name: Commit changed file
+#        uses: EndBug/add-and-commit@v7
+#        with:
+#          add: 'north.json north_west.json west.json mid.json east.json south_west.json south_east.json'
