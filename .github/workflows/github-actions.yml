@@ -80,13 +80,13 @@ jobs:
 
       - name: Update data files
         run: |
-          echo '${{ steps.requestN.outputs.response }}' > north.json
-          echo '${{ steps.requestNW.outputs.response }}' > north_west.json
-          echo '${{ steps.requestW.outputs.response }}' > west.json
-          echo '${{ steps.requestM.outputs.response }}' > mid.json
-          echo '${{ steps.requestE.outputs.response }}' > east.json
-          echo '${{ steps.requestSW.outputs.response }}' > south_west.json
-          echo '${{ steps.requestSE.outputs.response }}' > south_east.json
+          echo '${{ steps.requestN.outputs.response }}' > api/north.json
+          echo '${{ steps.requestNW.outputs.response }}' > api/north_west.json
+          echo '${{ steps.requestW.outputs.response }}' > api/west.json
+          echo '${{ steps.requestM.outputs.response }}' > api/mid.json
+          echo '${{ steps.requestE.outputs.response }}' > api/east.json
+          echo '${{ steps.requestSW.outputs.response }}' > api/south_west.json
+          echo '${{ steps.requestSE.outputs.response }}' > api/south_east.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v1
