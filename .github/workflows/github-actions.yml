@@ -6,7 +6,7 @@ on:
       - master
   schedule:
 #    - cron: "*/35 * * * *"
-    - cron: "*/30 0-1,4-23 * * *" # Every 30 minutes, at 12:00 AM through 01:59 AM and 04:00 AM through 11:59 PM > 294 API calls for 7 regions
+#    - cron: "*/30 0-1,4-23 * * *" # Every 30 minutes, at 12:00 AM through 01:59 AM and 04:00 AM through 11:59 PM > 294 API calls for 7 regions
   workflow_dispatch:
 
 permissions:
@@ -35,18 +35,21 @@ jobs:
       - name: "Update weather data"
         shell: bash
         run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ./api/weather_data.json
-          git config --global user.name ${{ env.GIT_USER }}
-          git config --global user.email ${{ env.GIT_EMAIL }}
-          git add "./api/WEATHER_DATA.json"
-          git commit -m "Updated weather data"
-          git push
+          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ${{ runner.temp }}/weather_data.json
 
       - name: "Upload artifact"
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: './api/WEATHER_DATA.json'
+          path: ${{ runner.temp }}/weather_data.json
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@main
+#        with:
+#          name: github-pages
+#          path: ${{ runner.temp }}/artifact.tar
+##          retention-days: ${{ inputs.retention-days }}
+
 
       - name: "Deploy to GitHub Pages"
         id: deployment
