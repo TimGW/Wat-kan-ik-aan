@@ -4,23 +4,13 @@ on:
   push:
     branches:
       - master
-#  schedule:
+  schedule:
 #    - cron: "*/35 * * * *"
-#    - cron: "*/30 0-1,4-23 * * *" # Every 30 minutes, at 12:00 AM through 01:59 AM and 04:00 AM through 11:59 PM > 294 API calls for 7 regions
+    - cron: "*/30 0-1,4-23 * * *" # Every 30 minutes, at 12:00 AM through 01:59 AM and 04:00 AM through 11:59 PM > 294 API calls for 7 regions
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  # Build job
-  build:
+  update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,43 +19,7 @@ jobs:
         shell: bash
         run: |
           curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > weather_data.json
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v1
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Commit changed file
+        uses: EndBug/add-and-commit@v7
         with:
-          path: 'weather_data.json'
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-#
-#    deploy:
-#      environment:
-#        name: github-pages
-#        url: ${{ steps.deployment.outputs.page_url }}
-#      runs-on: ubuntu-latest
-#      steps:
-#        - name: Checkout
-#          uses: actions/checkout@v3
-#        - name: Setup Pages
-#          uses: actions/configure-pages@v1
-#        - name: Upload artifact
-#          uses: actions/upload-pages-artifact@v1
-#          with:
-#            # Upload entire repository
-#            path: '.'
-#        - name: Deploy to GitHub Pages
-#          id: deployment
-#          uses: actions/deploy-pages@main
-#
-#
+          add: 'weather_data.json'
