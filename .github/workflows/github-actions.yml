@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-  schedule:
+#  schedule:
 #    - cron: "*/35 * * * *"
 #    - cron: "*/30 0-1,4-23 * * *" # Every 30 minutes, at 12:00 AM through 01:59 AM and 04:00 AM through 11:59 PM > 294 API calls for 7 regions
   workflow_dispatch:
@@ -19,38 +19,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: "github-pages"
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v3
+  # Build job
+#  build:
+  # <Not provided for brevity>
+  # At a minimum this job should upload artifacts using actions/upload-pages-artifact
 
-      - name: "Setup Pages"
-        uses: actions/configure-pages@v1
-
-      - name: "Update weather data"
-        shell: bash
-        run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ${{ runner.temp }}/weather_data.json
-
-      - name: "Upload artifact"
-        uses: actions/upload-pages-artifact@v1
-        with:
-          # Upload entire repository
-          path: ${{ runner.temp }}/weather_data.json
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@main
+#  deploy:
+#    environment:
+#      name: "github-pages"
+#      url: ${{ steps.deployment.outputs.page_url }}
+#
+#    runs-on: ubuntu-latest
+#
+#    needs: build
+#
+#    steps:
+#      - name: "Checkout"
+#        uses: actions/checkout@v3
+#
+#      - name: "Setup Pages"
+#        uses: actions/configure-pages@v1
+#
+#      - name: "Update weather data"
+#        shell: bash
+#        run: |
+#          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ${{ runner.temp }}/weather_data.json
+#
+#      - name: "Upload artifact"
+#        uses: actions/upload-pages-artifact@v1
 #        with:
-#          name: github-pages
-#          path: ${{ runner.temp }}/artifact.tar
-##          retention-days: ${{ inputs.retention-days }}
+#          # Upload entire repository
+#          path: ${{ runner.temp }}/weather_data.json
+#
+#      - name: "Deploy to GitHub Pages"
+#        id: deployment
+#        uses: actions/deploy-pages@v1
 
-
-      - name: "Deploy to GitHub Pages"
-        id: deployment
-        uses: actions/deploy-pages@main
+    deploy:
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Setup Pages
+          uses: actions/configure-pages@v1
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v1
+          with:
+            # Upload entire repository
+            path: './api/weather_data.json'
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@main
