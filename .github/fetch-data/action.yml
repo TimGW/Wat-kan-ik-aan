@@ -1,9 +1,11 @@
 name: 'Fetch weather data'
 description: 'fetching data from weerlive.nl'
+
 inputs:
   api-token:
     description: 'api token secret cannot be accessed from a composite action'
     required: true
+
 runs:
   using: "composite"
   steps:
@@ -11,49 +13,49 @@ runs:
       id: requestN
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=53.034325, 6.366893'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=53.034325,6.366893'
         method: 'GET'
 
     - name: Fetch north west data
       id: requestNW
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.553754, 4.822178'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.553754,4.822178'
         method: 'GET'
 
     - name: Fetch west data
       id: requestW
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.022828, 4.706352'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.022828,4.706352'
         method: 'GET'
 
     - name: Fetch mid data
       id: requestM
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.121877, 5.305695'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.121877,5.305695'
         method: 'GET'
 
     - name: Fetch east data
       id: requestE
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.314997, 6.209913'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.314997,6.209913'
         method: 'GET'
 
     - name: Fetch south west data
       id: requestSW
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.595863, 4.741467'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.595863,4.741467'
         method: 'GET'
 
     - name: Fetch south east data
       id: requestSE
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.308874, 5.749949'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.308874,5.749949'
         method: 'GET'
 
     - name: Update data files
