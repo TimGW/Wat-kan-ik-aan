@@ -15,11 +15,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Fetch weather data
-        shell: bash
-        run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Utrecht > weather_data.json
+      - name: Fetch data
+        id: myRequest
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Utrecht'
+          method: 'GET'
+
+      - name: Update data file
+        run: echo '${{ steps.myRequest.outputs.response }}' > data.json
+#      - name: Fetch weather data
+#        shell: bash
+#        run: |
+#          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Utrecht > weather_data.json
       - name: Commit changed file
         uses: EndBug/add-and-commit@v7
         with:
-          add: 'weather_data.json'
+          add: 'data.json'
