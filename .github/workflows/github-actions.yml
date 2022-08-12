@@ -20,56 +20,52 @@ concurrency:
 
 jobs:
   # Build job
-#  build:
-  # <Not provided for brevity>
-  # At a minimum this job should upload artifacts using actions/upload-pages-artifact
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Fetch weather data
+        shell: bash
+        run: |
+          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > weather_data.json
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'weather_data.json'
 
-#  deploy:
-#    environment:
-#      name: "github-pages"
-#      url: ${{ steps.deployment.outputs.page_url }}
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
 #
-#    runs-on: ubuntu-latest
+#    deploy:
+#      environment:
+#        name: github-pages
+#        url: ${{ steps.deployment.outputs.page_url }}
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: Checkout
+#          uses: actions/checkout@v3
+#        - name: Setup Pages
+#          uses: actions/configure-pages@v1
+#        - name: Upload artifact
+#          uses: actions/upload-pages-artifact@v1
+#          with:
+#            # Upload entire repository
+#            path: '.'
+#        - name: Deploy to GitHub Pages
+#          id: deployment
+#          uses: actions/deploy-pages@main
 #
-#    needs: build
 #
-#    steps:
-#      - name: "Checkout"
-#        uses: actions/checkout@v3
-#
-#      - name: "Setup Pages"
-#        uses: actions/configure-pages@v1
-#
-#      - name: "Update weather data"
-#        shell: bash
-#        run: |
-#          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ${{ runner.temp }}/weather_data.json
-#
-#      - name: "Upload artifact"
-#        uses: actions/upload-pages-artifact@v1
-#        with:
-#          # Upload entire repository
-#          path: ${{ runner.temp }}/weather_data.json
-#
-#      - name: "Deploy to GitHub Pages"
-#        id: deployment
-#        uses: actions/deploy-pages@v1
-
-    deploy:
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-        - name: Setup Pages
-          uses: actions/configure-pages@v1
-        - name: Upload artifact
-          uses: actions/upload-pages-artifact@v1
-          with:
-            # Upload entire repository
-            path: '.'
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@main
