@@ -18,7 +18,7 @@ jobs:
       - name: Fetch weather data
         shell: bash
         run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > weather_data.json
+          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Utrecht > weather_data.json
       - name: Commit changed file
         uses: EndBug/add-and-commit@v7
         with:
