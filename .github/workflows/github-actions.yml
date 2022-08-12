@@ -35,18 +35,13 @@ jobs:
       - name: "Update weather data"
         shell: bash
         run: |
-          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ./api/weather_data.json
-          git config --global user.name ${{ env.GIT_USER }}
-          git config --global user.email ${{ env.GIT_EMAIL }}
-          git add "./api/WEATHER_DATA.json"
-          git commit -m "Updated weather data"
-          git push
+          curl -X POST -d {} https://weerlive.nl/api/json-data-10min.php?key=${{ secrets.API_KEY }}&locatie=Amsterdam > ${{ runner.temp }}/weather_data.json
 
       - name: "Upload artifact"
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: './api/WEATHER_DATA.json'
+          path: ${{ runner.temp }}/weather_data.json
 
       - name: "Deploy to GitHub Pages"
         id: deployment
