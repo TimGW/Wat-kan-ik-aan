@@ -57,6 +57,7 @@ runs:
         method: 'GET'
 
     - name: Update data files
+      shell: bash
       run: |
         echo '${{ steps.requestN.outputs.response }}' > api/north.json
         echo '${{ steps.requestNW.outputs.response }}' > api/north_west.json
