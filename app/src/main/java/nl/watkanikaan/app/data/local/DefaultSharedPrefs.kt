@@ -1,5 +1,6 @@
 package nl.watkanikaan.app.data.local
 
+import com.google.android.gms.maps.model.LatLng
 import nl.watkanikaan.app.domain.model.Profile
 import javax.inject.Inject
 
@@ -8,10 +9,15 @@ class DefaultSharedPrefs @Inject constructor(
     private val spm: SharedPrefManager,
 ): SharedPref  {
     override fun setLocationSetting(latitude: Double, longitude: Double) {
-        spm.setStringValue(SHARED_PREF_LOCATION, "$latitude,$longitude")
+        spm.setStringValue(SHARED_PREF_LOCATION_LAT, latitude.toString())
+        spm.setStringValue(SHARED_PREF_LOCATION_LONG, longitude.toString())
     }
 
-    override fun getLocationSetting() = spm.getStringValue(SHARED_PREF_LOCATION)
+    override fun getLocationSetting(): LatLng? {
+        val lat = spm.getStringValue(SHARED_PREF_LOCATION_LAT)?.toDoubleOrNull()
+        val long = spm.getStringValue(SHARED_PREF_LOCATION_LONG)?.toDoubleOrNull()
+        return if(lat != null && long != null) LatLng(lat, long) else null
+    }
 
     override fun setDarkModeSetting(darkMode: Int) {
         spm.setIntValue(SHARED_PREF_DARK_MODE, darkMode)
@@ -46,7 +52,8 @@ class DefaultSharedPrefs @Inject constructor(
     )
 
     companion object {
-        const val SHARED_PREF_LOCATION = "SHARED_PREF_LOCATION"
+        const val SHARED_PREF_LOCATION_LAT = "SHARED_PREF_LOCATION_LAT"
+        const val SHARED_PREF_LOCATION_LONG = "SHARED_PREF_LOCATION_LONG"
         const val SHARED_PREF_DARK_MODE = "SHARED_PREF_DARK_MODE"
         const val SHARED_PREF_THEME = "SHARED_PREF_THEME"
 

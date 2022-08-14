@@ -90,7 +90,9 @@ class WeatherViewModel @Inject constructor(
             val forecast = weather?.forecast
 
             _isLoading.value = result is Result.Loading && (weather == null && error == null)
-            weather?.let { _weather.value = it }
+            weather?.let { _weather.value = it.copy(
+                location = it.location.plus(" Nederland")
+            ) }
             error?.let { _errorMessage.value = it }
 
             if (forceRefresh) {
