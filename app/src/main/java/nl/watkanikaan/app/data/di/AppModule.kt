@@ -10,13 +10,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nl.watkanikaan.app.data.local.AppDatabase
-import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.data.local.DefaultSharedPrefs
+import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.data.local.TypeConverterForecast
 import nl.watkanikaan.app.data.remote.WeatherJsonAdapter
 import nl.watkanikaan.app.domain.model.MoshiDefault
 import nl.watkanikaan.app.domain.model.MoshiNetwork
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -42,10 +43,21 @@ abstract class AppModule {
 
         @Provides
         @Singleton
+        fun provideOkHttpClient(): OkHttpClient {
+            val builder = OkHttpClient().newBuilder()
+            builder.addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            return builder.build()
+        }
+
+        @Provides
+        @Singleton
         fun provideRetrofit(
-            @MoshiNetwork moshi: Moshi
-        ): Retrofit = Retrofit.Builder().baseUrl("https://weerlive.nl/api/")
-            .client(OkHttpClient().newBuilder().build())
+            okHttpClient: OkHttpClient,
+            @MoshiNetwork moshi: Moshi,
+        ): Retrofit = Retrofit.Builder().baseUrl("https://timgw.github.io/")
+            .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 

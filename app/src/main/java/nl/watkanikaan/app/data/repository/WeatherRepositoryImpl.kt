@@ -21,7 +21,7 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     companion object {
-        private const val REFRESH_HOURLY_INTERVAL = 2L // hours
+        private const val REFRESH_HOURLY_INTERVAL = 1L // hours
     }
 
     override fun fetchWeather(
@@ -37,7 +37,7 @@ class WeatherRepositoryImpl @Inject constructor(
         }
 
         override suspend fun fetchFromRemote(): Response<WeatherEntity> {
-            val loc = location ?: "Amsterdam"
+            val loc = location ?: "mid"
             return weatherService.getWeather(location = loc)
         }
 

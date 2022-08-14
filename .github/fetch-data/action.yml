@@ -13,7 +13,7 @@ runs:
       id: requestN
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=53.034325,6.366893'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=53.166874,6.301408'
         method: 'GET'
 
     - name: Fetch north west data
@@ -23,39 +23,32 @@ runs:
         url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.553754,4.822178'
         method: 'GET'
 
-    - name: Fetch west data
-      id: requestW
+    - name: Fetch east data
+      id: requestE
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.022828,4.706352'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.513494,6.533156'
         method: 'GET'
 
     - name: Fetch mid data
       id: requestM
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.121877,5.305695'
-        method: 'GET'
-
-    - name: Fetch east data
-      id: requestE
-      uses: fjogeleit/http-request-action@master
-      with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.314997,6.209913'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=52.080360,5.474725'
         method: 'GET'
 
     - name: Fetch south west data
       id: requestSW
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.595863,4.741467'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.800166,4.475967'
         method: 'GET'
 
     - name: Fetch south east data
       id: requestSE
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.308874,5.749949'
+        url: 'https://weerlive.nl/api/json-data-10min.php?key=${{ inputs.api-token }}&locatie=51.439604,5.662535'
         method: 'GET'
 
     - name: Update data files
@@ -63,7 +56,6 @@ runs:
       run: |
         echo '${{ steps.requestN.outputs.response }}' > api/north.json
         echo '${{ steps.requestNW.outputs.response }}' > api/north_west.json
-        echo '${{ steps.requestW.outputs.response }}' > api/west.json
         echo '${{ steps.requestM.outputs.response }}' > api/mid.json
         echo '${{ steps.requestE.outputs.response }}' > api/east.json
         echo '${{ steps.requestSW.outputs.response }}' > api/south_west.json
