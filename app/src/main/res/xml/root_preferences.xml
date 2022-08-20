@@ -13,22 +13,6 @@
             app:key="profile_thermoception"
             app:title="@string/preferences_profile_thermoception" />
 
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/gender_items"
-            android:entryValues="@array/gender_values"
-            app:iconSpaceReserved="false"
-            app:key="profile_gender"
-            app:title="@string/preferences_profile_gender" />
-
-        <EditTextPreference
-            android:key="profile_age"
-            android:maxLength="2"
-            app:iconSpaceReserved="false"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:title="@string/preferences_profile_age" />
-
     </PreferenceCategory>
 
     <PreferenceCategory

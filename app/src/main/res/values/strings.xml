@@ -10,7 +10,6 @@
     <string name="top_dress">Jurkje</string>
     <string name="top_tshirt">T-Shirt</string>
     <string name="top_vest">Dun vest</string>
-    <string name="top_long_shirt">Lang shirt</string>
     <string name="top_sweater">Trui</string>
     <string name="extra_rain">Neem ook een paraplu mee of doe regenkleding aan.</string>
     <string name="extra_rain_windy">Doe ook een regenbroek/jas aan. Een paraplu waait weg.</string>
@@ -83,21 +82,6 @@
     <string name="theme_label_red">Rood</string>
     <string name="theme_label_green">Groen</string>
 
-    <string name="preferences_profile_gender">Geslacht</string>
-    <string-array name="gender_items">
-        <item>@string/gender_label_other</item>
-        <item>@string/gender_label_man</item>
-        <item>@string/gender_label_woman</item>
-    </string-array>
-    <string-array name="gender_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-    <string name="gender_label_other">Anders</string>
-    <string name="gender_label_man">Man</string>
-    <string name="gender_label_woman">Vrouw</string>
-
     <string-array name="night_mode_items">
         <item>@string/night_mode_label_auto</item>
         <item>@string/night_mode_label_off</item>
@@ -116,7 +100,6 @@
     <string name="jacket_warm_rain">Dunne regenjas of poncho</string>
     <string name="location">Locatie: %1$s</string>
     <string name="location_empty">Locatie: Onbekend</string>
-    <string name="preferences_profile_age">Leeftijd</string>
     <string name="location_not_found">Geen locatie gevonden</string>
     <string name="location_permissions">Geen locatie permissies</string>
     <string name="location_settings">Instellingen</string>

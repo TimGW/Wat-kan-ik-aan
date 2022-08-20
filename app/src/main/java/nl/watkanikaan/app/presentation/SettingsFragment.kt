@@ -1,12 +1,8 @@
 package nl.watkanikaan.app.presentation
 
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.InputFilter.LengthFilter
-import android.text.InputType
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -23,8 +19,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var rateAppPref: Preference? = null
     private var darkModePref: ListPreference? = null
     private var profileThermoceptionPref: ListPreference? = null
-    private var profileGenderPref: ListPreference? = null
-    private var profileAgePref: EditTextPreference? = null
     private var themePref: ListPreference? = null
 
     @Inject
@@ -41,8 +35,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         profileThermoceptionPref = (findPreference("profile_thermoception") as? ListPreference)
-        profileGenderPref = (findPreference("profile_gender") as? ListPreference)
-        profileAgePref = (findPreference("profile_age") as? EditTextPreference)
         darkModePref = (findPreference("dark_mode_key") as? ListPreference)
         rateAppPref = (findPreference("preferences_rate_app_key") as? Preference)
         themePref = (findPreference("theme_key") as? ListPreference)
@@ -63,31 +55,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     resources.getStringArray(R.array.thermoception_items)[setting]
                 true
             }
-
-        profileGenderPref?.summary = resources
-            .getStringArray(R.array.gender_items)[sharedPrefs.getGender()]
-        profileGenderPref?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                val setting = (newValue as String)
-                    .toIntOrNull() ?: return@OnPreferenceChangeListener false
-                profileGenderPref?.summary =
-                    resources.getStringArray(R.array.gender_items)[setting]
-                true
-            }
-
-        profileAgePref?.summary = sharedPrefs.getAge()?.toString().or("-")
-        profileAgePref?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                val setting = (newValue as String)
-                    .toIntOrNull() ?: return@OnPreferenceChangeListener false
-                profileAgePref?.summary = setting.toString()
-                true
-            }
-        profileAgePref?.setOnBindEditTextListener { editText ->
-            editText.inputType = InputType.TYPE_CLASS_NUMBER
-            editText.setSelection(editText.length())
-            editText.filters = arrayOf<InputFilter>(LengthFilter(2))
-        }
     }
 
     private fun displayPrefs() {

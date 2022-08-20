@@ -33,22 +33,12 @@ class DefaultSharedPrefs @Inject constructor(
 
     override fun getThermoception() = spm.getStringValue(SHARED_PREF_THERMOCEPTION)?.toInt() ?: -1
 
-    override fun getGender() = spm.getStringValue(SHARED_PREF_GENDER)?.toInt() ?: 0
-
-    override fun getAge(): Int? = spm.getStringValue(SHARED_PREF_AGE)?.toInt()
-
     override fun getProfile() = Profile(
         thermoception = when (getThermoception()) {
             0 -> Profile.Thermoception.Cold
             2 -> Profile.Thermoception.Warm
             else -> Profile.Thermoception.Normal
         },
-        gender = when (getGender()) {
-            1 -> Profile.Gender.Male
-            2 -> Profile.Gender.Female
-            else -> Profile.Gender.Unspecified
-        },
-        age = getAge() ?: 0,
     )
 
     companion object {
@@ -58,7 +48,5 @@ class DefaultSharedPrefs @Inject constructor(
         const val SHARED_PREF_THEME = "SHARED_PREF_THEME"
 
         const val SHARED_PREF_THERMOCEPTION = "profile_thermoception"
-        const val SHARED_PREF_GENDER = "profile_gender"
-        const val SHARED_PREF_AGE = "profile_age"
     }
 }

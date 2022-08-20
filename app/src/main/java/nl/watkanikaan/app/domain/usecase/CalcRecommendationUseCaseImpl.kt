@@ -1,7 +1,6 @@
 package nl.watkanikaan.app.domain.usecase
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import nl.watkanikaan.app.data.local.SharedPref
@@ -14,8 +13,8 @@ import nl.watkanikaan.app.domain.model.Recommendation.Extra
 import nl.watkanikaan.app.domain.model.Recommendation.Jacket
 import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
+import nl.watkanikaan.app.domain.model.Weather.Day
 import nl.watkanikaan.app.domain.usecase.marker.CalcRecommendationUseCase
-import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
@@ -43,7 +42,7 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
 
         return Recommendation(
             selectedDay = forecast.day,
-            jacket = determineJacket(temp, forecast),
+            jacket = determineJacket(temp),
             top = determineTop(temp),
             bottom = determineBottom(temp, forecast),
             extras = determineExtras(temp, forecast)
@@ -52,10 +51,9 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
 
     private fun determineJacket(
         temp: Double,
-        forecast: Weather.Forecast,
     ): Jacket? = when {
         temp >= 20.0 -> null
-        temp >= 15.0 -> if (forecast.dewPoint.isMuggy()) null else Jacket.SUMMER
+        temp >= 15.0 -> Jacket.SUMMER
         temp >= 10.0 -> Jacket.NORMAL
         else -> Jacket.WINTER
     }
@@ -63,8 +61,8 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
     private fun determineTop(
         temp: Double,
     ): Top = when {
-        temp >= 15.0 -> Top.T_SHIRT
-        temp >= 10.0 -> Top.VEST
+        temp >= 20.0 -> Top.T_SHIRT
+        temp >= 15.0 -> Top.VEST
         else -> Top.SWEATER
     }
 
@@ -73,8 +71,7 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
         forecast: Weather.Forecast,
     ): Bottom = when {
         forecast.isPrecipitationExpected() -> Bottom.LONG
-        temp >= 20.0 -> Bottom.SHORTS
-        temp >= 15.0 -> if (forecast.dewPoint.isMuggy()) Bottom.SHORTS else Bottom.LONG
+        temp >= 21.0 -> Bottom.SHORTS
         else -> Bottom.LONG
     }
 
@@ -83,16 +80,16 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
         forecast: Weather.Forecast,
     ): Set<Extra> {
         val result = mutableSetOf<Extra>()
-        val isSunUp = LocalTime.now().hour in forecast.sunUp..forecast.sunUnder
-        val today = forecast.day == Weather.Day.NOW || forecast.day == Weather.Day.TODAY
 
-        if (forecast.dewPoint.isMuggy()) result.add(Extra.MUGGY)
-
-        when {
-            today && forecast.isSunny() -> if (isSunUp) result.add(Extra.SUNNY)
-            forecast.isSunny() -> result.add(Extra.SUNNY)
+        if (forecast.isSunny()) {
+            when (forecast.day) {
+                Day.NOW, Day.TODAY -> {
+                    val isSunUp = LocalTime.now().hour in forecast.sunUp..forecast.sunUnder - 2
+                    if (isSunUp) result.add(Extra.SUNNY)
+                }
+                else -> result.add(Extra.SUNNY)
+            }
         }
-
         if (temp <= 5.0) result.add(Extra.FREEZING)
         if (forecast.isPrecipitationExpected()) {
             if (forecast.windForce >= 5) result.add(Extra.RAIN_WINDY) else result.add(Extra.RAIN)
@@ -111,30 +108,24 @@ fun actuarialTemperature(
     var addition = 0.0
 
     when (profile.thermoception) {
-        Profile.Thermoception.Cold -> addition -= 2.5
+        Profile.Thermoception.Cold -> addition -= 3
         Profile.Thermoception.Normal -> addition
-        Profile.Thermoception.Warm -> addition += 2.5
+        Profile.Thermoception.Warm -> addition += 3
     }
     when (movement) {
-        Movement.Light -> addition += 3.0
-        Movement.Heavy -> addition += 5.0
-        else -> addition -= 1.0
+        Movement.Light -> addition += 5.0
+        Movement.Heavy -> addition += 10.0
+        else -> addition
     }
-    if (profile.age >= 70) addition -= 2.0
-    if (profile.gender is Profile.Gender.Female) addition -= 2.5
     if (forecast.isSunny()) addition += 5.0
 
-    return forecast.windChillTemp + addition.coerceIn(-7.0, 7.0)
+    return forecast.windChillTemp + addition
 }
 
 fun Weather.Forecast.isSunny() =
-    (weatherIcon == "zonnig" || weatherIcon == "halfbewolkt") && chanceOfSun >= 75
-
-fun Int?.isMuggy() = this != null && this >= 20 && LocalDate.now().isWarmMonth()
+    (weatherIcon == "zonnig" || weatherIcon == "halfbewolkt") && chanceOfSun >= 80
 
 fun Weather.Forecast.isPrecipitationExpected(): Boolean {
-    return chanceOfPrecipitation >= 40 || weatherIcon.contains("regen") ||
+    return chanceOfPrecipitation >= 60 || weatherIcon.contains("regen") ||
             weatherIcon == "buien" || weatherIcon == "hagel" || weatherIcon == "sneeuw"
 }
-
-fun LocalDate.isWarmMonth() = monthValue in 5..9

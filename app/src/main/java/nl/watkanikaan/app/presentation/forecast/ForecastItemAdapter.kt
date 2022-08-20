@@ -74,19 +74,19 @@ class ForecastItemAdapter(
 
             val cardColor: Int
             val contentColor: Int
-            val strokeWidth: Int
+            val strokeColor: Int
             if (selectedPosition == adapterPosition) {
                 cardColor = context.getThemeColor(AndroidR.attr.colorPrimaryContainer)
                 contentColor = context.getThemeColor(AndroidR.attr.colorOnPrimaryContainer)
-                strokeWidth = 0
+                strokeColor = context.getThemeColor(AndroidR.attr.colorPrimaryContainer)
             } else {
                 cardColor = context.getThemeColor(AndroidR.attr.colorSurface)
                 contentColor = context.getThemeColor(AndroidR.attr.colorOnSurface)
-                strokeWidth = context.resources.getDimensionPixelSize(R.dimen.card_stroke_width)
+                strokeColor = context.getThemeColor(AndroidR.attr.colorOutline)
             }
 
             binding.card.setCardBackgroundColor(cardColor)
-            binding.card.strokeWidth = strokeWidth
+            binding.card.strokeColor = strokeColor
             binding.overline.setTextColor(contentColor)
             binding.icon.setColorFilter(contentColor)
             binding.underline.setTextColor(contentColor)

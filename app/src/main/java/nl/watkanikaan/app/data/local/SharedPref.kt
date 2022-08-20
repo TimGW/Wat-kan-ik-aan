@@ -11,7 +11,5 @@ interface SharedPref {
     fun setThemeSetting(darkMode: Int)
     fun getThemeSetting(): Int?
     fun getThermoception(): Int
-    fun getGender(): Int
-    fun getAge(): Int?
     fun getProfile(): Profile
 }
