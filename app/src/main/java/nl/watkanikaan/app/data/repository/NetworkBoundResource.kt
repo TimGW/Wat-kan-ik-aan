@@ -3,6 +3,7 @@ package nl.watkanikaan.app.data.repository
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
@@ -30,6 +31,7 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         try {
             if (shouldFetch(cachedData)) {
                 emit(Result.Loading(cachedData)) // update loading state with cached data
+                delay(10000)
 
                 val apiResponse = fetchFromRemote()
                 val remoteResponse = apiResponse.body()

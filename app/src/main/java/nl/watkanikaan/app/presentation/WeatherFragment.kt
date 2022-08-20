@@ -80,11 +80,6 @@ class WeatherFragment : Fragment(), MenuProvider, PermissionsHelper.PermissionLi
             permissionsHelper.check()
         }
 
-        binding.loadingWeatherRv.loadingNow.loadingOverline.text = getText(R.string.now)
-        binding.loadingWeatherRv.loadingToday.loadingOverline.text = getText(R.string.today)
-        binding.loadingWeatherRv.loadingTomorrow.loadingOverline.text = getText(R.string.tomorrow)
-        binding.loadingWeatherRv.loadingDayAfterTomorrow.loadingOverline.text =
-            getText(R.string.day_after_tomorrow)
         binding.swiperefresh.setOnRefreshListener(viewModel::refresh)
         binding.chipsContainer.chipRestMovement.setOnClickListener {
             viewModel.selectMovement(Movement.Rest)
@@ -144,6 +139,7 @@ class WeatherFragment : Fragment(), MenuProvider, PermissionsHelper.PermissionLi
             append(getString(R.string.alert_dialog_forecast_msg_wind, forecast.windForce), nl)
             append(getString(R.string.alert_dialog_forecast_msg_sunup, forecast.sunUp), nl)
             append(getString(R.string.alert_dialog_forecast_msg_sununder, forecast.sunUnder))
+            append(getString(R.string.alert_dialog_forecast_msg_dew, forecast.dewPoint), nl)
         }
 
         MaterialAlertDialogBuilder(requireContext())

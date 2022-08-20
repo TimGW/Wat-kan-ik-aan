@@ -5,29 +5,11 @@
     android:layout_height="match_parent"
     android:importantForAccessibility="noHideDescendants">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+    <nl.watkanikaan.app.presentation.forecast.LoadingShimmer
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="?colorOutline"
-        app:strokeWidth="@dimen/card_stroke_width">
-
-        <nl.watkanikaan.app.presentation.forecast.LoadingShimmer
-            android:id="@+id/overline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:id="@+id/loading_overline"
-            style="@style/TextAppearance.MyTheme.LabelSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:textAlignment="center" />
-    </com.google.android.material.card.MaterialCardView>
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

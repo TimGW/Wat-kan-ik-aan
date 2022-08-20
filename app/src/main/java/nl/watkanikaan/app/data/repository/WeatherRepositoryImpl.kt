@@ -1,6 +1,7 @@
 package nl.watkanikaan.app.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import nl.watkanikaan.app.data.local.WeatherDao
 import nl.watkanikaan.app.data.model.WeatherEntity
