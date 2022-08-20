@@ -3,6 +3,7 @@ package nl.watkanikaan.app.domain.usecase
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import nl.watkanikaan.app.data.local.SharedPref
 import nl.watkanikaan.app.domain.model.Result
@@ -35,7 +36,9 @@ class FetchWeatherUseCaseImpl @Inject constructor(
 
         return repository.fetchWeather(
             area.jsonKey, params.forceRefresh
-        ).map { response ->
+        ).debounce {
+            if (it is Result.Loading) 300L else 0L
+        }.map { response ->
             val weather = response.data ?: return@map response
 
             val updatedResponse = weather.copy(

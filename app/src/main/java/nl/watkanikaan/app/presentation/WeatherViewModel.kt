@@ -32,7 +32,7 @@ class WeatherViewModel @Inject constructor(
     private var selectedMovement: Movement = Movement.Rest
     private var selectedForecast: Weather.Forecast? = null
 
-    private val _isLoading = MutableLiveData<Boolean>(true)
+    private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading.distinctUntilChanged()
 
     private val _errorMessage = MutableLiveData<Int>()
@@ -89,7 +89,7 @@ class WeatherViewModel @Inject constructor(
             val weather = result.data
             val forecast = weather?.forecast
 
-            _isLoading.value = result is Result.Loading && (weather == null && error == null)
+            _isLoading.value = result is Result.Loading
             weather?.let { _weather.value = it.copy(
                 location = it.location.plus(" Nederland")
             ) }
