@@ -3,7 +3,7 @@ name: Fetch weather API updates and cache results
 on:
   push:
     branches:
-      - master
+      - main
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
