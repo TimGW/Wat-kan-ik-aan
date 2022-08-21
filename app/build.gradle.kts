@@ -147,6 +147,7 @@ dependencies {
 
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.43.2")
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2")
     kapt("com.google.dagger:hilt-android-compiler:2.43.2")
 
     // Navigation Component
