@@ -17,7 +17,7 @@ fun getSecret(key: String): String? {
         print(e)
         return null
     }
-    return items[key]!!
+    return items[key]
 }
 
 android {
