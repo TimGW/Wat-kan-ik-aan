@@ -54,7 +54,7 @@ android {
         applicationId = "nl.watkanikaan.app"
         minSdk = 26
         targetSdk = 32
-        versionCode = 12
+        versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
         versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
