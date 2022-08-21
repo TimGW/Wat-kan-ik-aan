@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import nl.watkanikaan.app.data.model.WeatherEntity
 
-@Database(entities = [WeatherEntity::class], version = 1, exportSchema = true)
+@Database(entities = [WeatherEntity::class], version = 1, exportSchema = false)
 @TypeConverters(TypeConverterForecast::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun weatherDao(): WeatherDao
