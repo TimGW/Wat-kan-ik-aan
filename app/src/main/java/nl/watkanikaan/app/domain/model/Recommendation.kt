@@ -32,6 +32,5 @@ data class Recommendation(
         RAIN_WINDY(R.string.extra_rain_windy),
         FREEZING(R.string.extra_freezing),
         SUNNY(R.string.extra_sunny),
-        MUGGY(R.string.extra_muggy),
     }
 }

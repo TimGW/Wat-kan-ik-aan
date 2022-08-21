@@ -20,6 +20,7 @@ import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
 import java.time.LocalDate
+import java.time.LocalTime
 
 class CalcRecommendationUseCaseImplTest {
     private val sharedPrefs: SharedPref = mock()
@@ -34,16 +35,6 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_above20degrees_nojacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
-
-        val result = it.execute(params).first()
-
-        assertNull(result.jacket)
-    }
-
-    @Test
-    fun testJacket_above15degreesHighDewPoint_noJacket() = runUseCase(setup) {
-        val forecast = anyForecast.copy(dewPoint = 20, windChillTemp = 15.0)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val result = it.execute(params).first()
@@ -82,8 +73,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testTop_under10degrees_sweater() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 9.9)
+    fun testTop_under15degrees_sweater() = runUseCase(setup) {
+        val forecast = anyForecast.copy(windChillTemp = 14.9)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -92,8 +83,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testTop_above10degrees_vest() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 10.0)
+    fun testTop_above15degrees_vest() = runUseCase(setup) {
+        val forecast = anyForecast.copy(windChillTemp = 15.0)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -102,8 +93,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testTop_above15degrees_tshirt() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 15.0)
+    fun testTop_above20degrees_tshirt() = runUseCase(setup) {
+        val forecast = anyForecast.copy(windChillTemp = 20.0)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -112,8 +103,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testBottom_under15degrees_long() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 14.9)
+    fun testBottom_under21degrees_long() = runUseCase(setup) {
+        val forecast = anyForecast.copy(windChillTemp = 20.9)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -122,8 +113,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testBottom_above15degreesMuggy_shorts() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 15.0, dewPoint = 20)
+    fun testBottom_above21degrees_short() = runUseCase(setup) {
+        val forecast = anyForecast.copy(windChillTemp = 21.0)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -132,48 +123,18 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun testBottom_above15degreesNotMuggy_long() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 15.0)
+    fun testBottom_above21degreesRaining_long() = runUseCase(setup) {
+        val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windChillTemp = 21.0)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
         assertEquals(Recommendation.Bottom.LONG, actual.bottom)
-    }
-
-    @Test
-    fun testBottom_above20degrees_short() = runUseCase(setup) {
-        val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
-
-        val actual = it.execute(params).first()
-
-        assertEquals(Recommendation.Bottom.SHORTS, actual.bottom)
-    }
-
-    @Test
-    fun testBottom_above20degreesRaining_long() = runUseCase(setup) {
-        val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
-
-        val actual = it.execute(params).first()
-
-        assertEquals(Recommendation.Bottom.LONG, actual.bottom)
-    }
-
-    @Test
-    fun testExtras_isMuggy_showMuggyMessage() = runUseCase(setup) {
-        val forecast = anyForecast.copy(dewPoint = 20)
-        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
-
-        val actual = it.execute(params).first()
-
-        assertTrue(actual.extras.contains(Extra.MUGGY))
     }
 
     @Test
     fun testExtras_isSunny_showSunnyMessage() = runUseCase(setup) {
-        val forecast = anyForecast.copy(chanceOfSun = 100)
+        val forecast = anyForecast.copy(chanceOfSun = 100, weatherIcon = "zonnig")
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -215,7 +176,6 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_allElements_showAllMessages() = runUseCase(setup) {
         val forecast = anyForecast.copy(
-            dewPoint = 20,
             chanceOfSun = 100,
             chanceOfPrecipitation = 100,
             windForce = 4,
@@ -227,10 +187,8 @@ class CalcRecommendationUseCaseImplTest {
         assertTrue(
             actual.extras.containsAll(
                 listOf(
-                    Extra.MUGGY,
-                    Extra.SUNNY,
+                    Extra.RAIN,
                     Extra.FREEZING,
-                    Extra.RAIN
                 )
             )
         )
@@ -249,10 +207,10 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun `testActuarialTemperature cold minus2`() {
+    fun `testActuarialTemperature cold minus3`() {
         val profile = Profile(Profile.Thermoception.Cold)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2.5
+        val expectedTemp = baselineTemp - 3.0
 
         assertEquals(
             expectedTemp,
@@ -262,10 +220,10 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun `testActuarialTemperature warm plus2`() {
+    fun `testActuarialTemperature warm plus3`() {
         val profile = Profile(Profile.Thermoception.Warm)
         val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2.5
+        val expectedTemp = baselineTemp + 3
 
         assertEquals(
             expectedTemp,
@@ -275,29 +233,29 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun `testIsPrecipitationExpected 40percent true`() {
-        val forecast = anyForecast.copy(chanceOfPrecipitation = 40)
+    fun `testIsPrecipitationExpected 60percent true`() {
+        val forecast = anyForecast.copy(chanceOfPrecipitation = 60)
 
         assertTrue(forecast.isPrecipitationExpected())
     }
 
     @Test
-    fun `testIsPrecipitationExpected 39percent false`() {
-        val forecast = anyForecast.copy(chanceOfPrecipitation = 39)
+    fun `testIsPrecipitationExpected 59percent false`() {
+        val forecast = anyForecast.copy(chanceOfPrecipitation = 59)
 
         assertFalse(forecast.isPrecipitationExpected())
     }
 
     @Test
-    fun `testIsPrecipitationExpected 40percentRain true`() {
-        val forecast = anyForecast.copy(weatherIcon = "regen", chanceOfPrecipitation = 40)
+    fun `testIsPrecipitationExpected 60percentRain true`() {
+        val forecast = anyForecast.copy(weatherIcon = "regen", chanceOfPrecipitation = 60)
 
         assertTrue(forecast.isPrecipitationExpected())
     }
 
     @Test
-    fun `testIsPrecipitationExpected 39percentRain true`() {
-        val forecast = anyForecast.copy(weatherIcon = "regen", chanceOfPrecipitation = 39)
+    fun `testIsPrecipitationExpected 59percentRain true`() {
+        val forecast = anyForecast.copy(weatherIcon = "regen", chanceOfPrecipitation = 59)
 
         assertTrue(forecast.isPrecipitationExpected())
     }
@@ -310,8 +268,8 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun `testIsPrecipitationExpected 40percentSun true`() {
-        val forecast = anyForecast.copy(weatherIcon = "sun", chanceOfPrecipitation = 40)
+    fun `testIsPrecipitationExpected 80percentSun true`() {
+        val forecast = anyForecast.copy(weatherIcon = "sun", chanceOfPrecipitation = 80)
 
         assertTrue(forecast.isPrecipitationExpected())
     }
