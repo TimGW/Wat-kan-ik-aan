@@ -21,7 +21,7 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE }}" > watkanikaan.keystore.asc
-          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch watkanikaan.keystore.asc > app/keystores/release/watkanikaan.keystore
+          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch watkanikaan.keystore.asc > app/watkanikaan.keystore
 
       - name: set up JDK 11
         uses: actions/setup-java@v3
