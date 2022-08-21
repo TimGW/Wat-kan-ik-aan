@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = ("nl.watkanikaan.app")
+        applicationId = "nl.watkanikaan.app"
         minSdk = 26
         targetSdk = 32
         versionCode = 12
