@@ -19,17 +19,38 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 class CalcRecommendationUseCaseImplTest {
     private val sharedPrefs: SharedPref = mock()
+    private val localDate = LocalDate.of(2022, 8, 23)
     private val anyForecast =
-        Weather.Forecast(Weather.Day.NOW,null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I, ANY_I, ANY_I)
+        Weather.Forecast(
+            Weather.Day.NOW,
+            null,
+            ANY_S,
+            ANY_D,
+            ANY_I,
+            ANY_D,
+            ANY_I,
+            ANY_I,
+            ANY_I,
+            ANY_I
+        )
     private val movement = Movement.Rest
+    private val clock = Clock.fixed(
+        localDate.atTime(LocalTime.NOON).toInstant(ZoneOffset.UTC),
+        ZoneId.systemDefault()
+    );
     private val setup: (CoroutineDispatcher) -> CalcRecommendationUseCaseImpl = {
         `when`(sharedPrefs.getProfile()).thenReturn(Profile())
-        CalcRecommendationUseCaseImpl(it, sharedPrefs)
+        CalcRecommendationUseCaseImpl(it, sharedPrefs, clock)
     }
 
     @Test
@@ -134,7 +155,7 @@ class CalcRecommendationUseCaseImplTest {
 
     @Test
     fun testExtras_isSunny_showSunnyMessage() = runUseCase(setup) {
-        val forecast = anyForecast.copy(chanceOfSun = 100, weatherIcon = "zonnig")
+        val forecast = anyForecast.copy(chanceOfSun = 100, weatherIcon = "zonnig", sunUp = 8, sunUnder = 21)
         val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
@@ -172,7 +193,6 @@ class CalcRecommendationUseCaseImplTest {
         assertTrue(actual.extras.contains(Extra.RAIN))
     }
 
-
     @Test
     fun testExtras_allElements_showAllMessages() = runUseCase(setup) {
         val forecast = anyForecast.copy(
@@ -188,6 +208,28 @@ class CalcRecommendationUseCaseImplTest {
             actual.extras.containsAll(
                 listOf(
                     Extra.RAIN,
+                    Extra.FREEZING,
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testExtras_FreezingSunny_showAllMessages() = runUseCase(setup) {
+        val forecast = anyForecast.copy(
+            chanceOfSun = 100,
+            weatherIcon = "zonnig",
+            sunUp = 9,
+            sunUnder = 21
+        )
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
+
+        val actual = it.execute(params).first()
+
+        assertTrue(
+            actual.extras.containsAll(
+                listOf(
+                    Extra.SUNNY,
                     Extra.FREEZING,
                 )
             )
