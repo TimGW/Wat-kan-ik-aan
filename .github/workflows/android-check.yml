@@ -1,4 +1,4 @@
-name: Android CI
+name: Android Check
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  build:
+  android-check:
 
     runs-on: ubuntu-latest
 

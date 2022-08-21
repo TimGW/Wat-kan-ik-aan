@@ -1,9 +1,6 @@
-name: Fetch weather API updates and cache results
+name: API update
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
@@ -18,11 +15,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  api-update:
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
