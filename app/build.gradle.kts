@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs")
     id("org.jetbrains.kotlin.plugin.parcelize")
 }
@@ -96,6 +96,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     // todo make pretty
     implementation("androidx.core:core-ktx:1.8.0")
@@ -147,7 +151,6 @@ dependencies {
 
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.43.2")
-    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2")
     kapt("com.google.dagger:hilt-android-compiler:2.43.2")
 
     // Navigation Component
