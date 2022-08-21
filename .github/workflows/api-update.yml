@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   api-update:
+    name: API update
 
     environment:
       name: github-pages
