@@ -1,5 +1,6 @@
 package nl.watkanikaan.app.domain.usecase
 
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
@@ -19,11 +20,12 @@ class FetchWeatherUseCaseImplTest {
     private val repository: WeatherRepository = mock()
     private val sharedPrefs: SharedPref = mock()
     private val setup: () -> FetchWeatherUseCaseImpl = {
-        `when`(sharedPrefs.getLocationSetting()).thenReturn("1.1,2.2")
+        `when`(sharedPrefs.getLocationSetting()).thenReturn(LatLng(1.1, 1.2))
         FetchWeatherUseCaseImpl(repository, sharedPrefs)
     }
-    private val anyForecasts = mapOf(
-        Weather.Day.NOW to Weather.Forecast(
+    private val anyForecasts = listOf(
+        Weather.Forecast(
+            Weather.Day.NOW,
             null,
             "",
             20.0,
@@ -63,7 +65,10 @@ class FetchWeatherUseCaseImplTest {
         })
 
         setup().execute(FetchWeatherUseCaseImpl.Params(forceRefresh)).collect {
-            assertEquals(21.0, (it as Result.Success).data?.forecast?.values?.first()?.windChillTemp)
+            assertEquals(
+                21.0,
+                (it as Result.Success).data?.forecast?.first()?.windChillTemp
+            )
         }
     }
 }
