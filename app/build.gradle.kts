@@ -9,7 +9,13 @@ plugins {
 
 fun getSecret(key: String): String {
     val items = HashMap<String, String>()
-    val f = File("secrets.properties")
+
+    val f = try {
+        File("secrets.properties")
+    } catch (e: Exception) {
+        print(e)
+        return ""
+    }
     f.forEachLine { items[it.split("=")[0]] = it.split("=")[1] }
     return items[key]!!
 }
@@ -54,12 +60,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
             applicationIdSuffix = ".debug"
-            buildConfigField("String", "API_KEY", getSecret("API_KEY"))
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
-            buildConfigField("String", "API_KEY", getSecret("API_KEY"))
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
