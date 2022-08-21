@@ -35,6 +35,14 @@ android {
             keyPassword = "android"
         }
         create("release") {
+            val tmpFilePath = System.getProperty("user.home") + "/work/_temp/"
+            val allFilesFromDir = File(tmpFilePath).listFiles()
+
+            if (allFilesFromDir != null) {
+                val keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo(File("watkanikaan.keystore"))
+            }
+
             storeFile = file("keystores/release/watkanikaan.keystore")
             storePassword = getSecret("storePassword") ?: System.getenv("SIGNING_STORE_PASSWORD")
             keyAlias = getSecret("keyAlias") ?: System.getenv("SIGNING_KEY_ALIAS")
@@ -62,14 +70,6 @@ android {
             applicationIdSuffix = ".debug"
         }
         getByName("release") {
-            val tmpFilePath = System.getProperty("user.home") + "/work/_temp/"
-            val allFilesFromDir = File(tmpFilePath).listFiles()
-
-            if (allFilesFromDir != null) {
-                val keystoreFile = allFilesFromDir.first()
-                keystoreFile.renameTo(File("watkanikaan.keystore"))
-            }
-
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -151,7 +151,7 @@ dependencies {
 
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.42")
-    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+//    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
     kapt("com.google.dagger:hilt-android-compiler:2.42")
 
     // Navigation Component
