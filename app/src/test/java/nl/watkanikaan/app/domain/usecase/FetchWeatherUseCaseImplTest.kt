@@ -45,7 +45,7 @@ class FetchWeatherUseCaseImplTest {
 
         setup().execute(FetchWeatherUseCaseImpl.Params(forceRefresh))
 
-        Mockito.verify(repository).fetchWeather("1.1,2.2", false)
+        Mockito.verify(repository).fetchWeather("mid", false)
     }
 
     @Test
