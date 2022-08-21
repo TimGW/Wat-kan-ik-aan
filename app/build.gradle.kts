@@ -7,16 +7,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
-fun getSecret(key: String): String {
+fun getSecret(key: String): String? {
     val items = HashMap<String, String>()
 
-    val f = try {
-        File("secrets.properties")
+    try {
+        val f = File("secrets.properties")
+        f.forEachLine { items[it.split("=")[0]] = it.split("=")[1] }
     } catch (e: Exception) {
         print(e)
-        return ""
+        return null
     }
-    f.forEachLine { items[it.split("=")[0]] = it.split("=")[1] }
     return items[key]!!
 }
 
@@ -35,10 +35,10 @@ android {
             keyPassword = "android"
         }
         create("release") {
-            storeFile = file(getSecret("storeFile"))
-            storePassword = getSecret("storePassword")
-            keyAlias = getSecret("keyAlias")
-            keyPassword = getSecret("storePassword")
+            storeFile = file(getSecret("storeFile")!!)
+            storePassword = getSecret("storePassword") ?: System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias = getSecret("keyAlias") ?: System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword = getSecret("storePassword") ?: System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
 
@@ -62,6 +62,14 @@ android {
             applicationIdSuffix = ".debug"
         }
         getByName("release") {
+            val tmpFilePath = System.getProperty("user.home") + "/work/_temp/"
+            val allFilesFromDir = File(tmpFilePath).listFiles()
+
+            if (allFilesFromDir != null) {
+                val keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo(File("watkanikaan.keystore"))
+            }
+
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
