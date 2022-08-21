@@ -150,8 +150,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.4.2")
 
     // Dependency Injection
-    implementation("com.google.dagger:hilt-android:2.43.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.43.1")
+    implementation("com.google.dagger:hilt-android:2.42")
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.42")
 
     // Navigation Component
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.0")
