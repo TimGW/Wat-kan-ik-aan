@@ -31,7 +31,6 @@ abstract class NetworkBoundResource<RequestType, ResultType>(
         try {
             if (shouldFetch(cachedData)) {
                 emit(Result.Loading(cachedData)) // update loading state with cached data
-                delay(10000)
 
                 val apiResponse = fetchFromRemote()
                 val remoteResponse = apiResponse.body()
