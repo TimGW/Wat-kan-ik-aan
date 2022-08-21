@@ -35,7 +35,7 @@ android {
             keyPassword = "android"
         }
         create("release") {
-            storeFile = file(getSecret("storeFile")!!)
+            storeFile = file("keystores/release/watkanikaan.keystore")
             storePassword = getSecret("storePassword") ?: System.getenv("SIGNING_STORE_PASSWORD")
             keyAlias = getSecret("keyAlias") ?: System.getenv("SIGNING_KEY_ALIAS")
             keyPassword = getSecret("storePassword") ?: System.getenv("SIGNING_KEY_PASSWORD")
