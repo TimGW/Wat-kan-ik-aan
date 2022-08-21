@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.time.Clock
 import javax.inject.Singleton
 
 @Module
@@ -30,6 +31,9 @@ abstract class AppModule {
     abstract fun bindSharedPrefs(defaultSharedPrefs: DefaultSharedPrefs): SharedPref
 
     companion object {
+        @Provides
+        @Singleton
+        fun provideClock(): Clock = Clock.systemDefaultZone()
 
         @Provides
         @Singleton

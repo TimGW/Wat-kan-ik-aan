@@ -15,12 +15,14 @@ import nl.watkanikaan.app.domain.model.Recommendation.Top
 import nl.watkanikaan.app.domain.model.Weather
 import nl.watkanikaan.app.domain.model.Weather.Day
 import nl.watkanikaan.app.domain.usecase.marker.CalcRecommendationUseCase
+import java.time.Clock
 import java.time.LocalTime
 import javax.inject.Inject
 
 class CalcRecommendationUseCaseImpl @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val sharedPrefs: SharedPref,
+    private val clock: Clock
 ) : CalcRecommendationUseCase {
 
     data class Params(
@@ -84,7 +86,7 @@ class CalcRecommendationUseCaseImpl @Inject constructor(
         if (forecast.isSunny()) {
             when (forecast.day) {
                 Day.NOW, Day.TODAY -> {
-                    val isSunUp = LocalTime.now().hour in forecast.sunUp..forecast.sunUnder - 2
+                    val isSunUp = LocalTime.now(clock).hour in forecast.sunUp..forecast.sunUnder - 2
                     if (isSunUp) result.add(Extra.SUNNY)
                 }
                 else -> result.add(Extra.SUNNY)
