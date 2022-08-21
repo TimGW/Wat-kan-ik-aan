@@ -6,6 +6,7 @@ import nl.watkanikaan.ANY_D
 import nl.watkanikaan.ANY_I
 import nl.watkanikaan.ANY_S
 import nl.watkanikaan.app.data.local.SharedPref
+import nl.watkanikaan.app.domain.model.Movement
 import nl.watkanikaan.app.domain.model.Profile
 import nl.watkanikaan.app.domain.model.Recommendation
 import nl.watkanikaan.app.domain.model.Recommendation.Extra
@@ -23,7 +24,8 @@ import java.time.LocalDate
 class CalcRecommendationUseCaseImplTest {
     private val sharedPrefs: SharedPref = mock()
     private val anyForecast =
-        Weather.Forecast(null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I, ANY_I, ANY_I)
+        Weather.Forecast(Weather.Day.NOW,null, ANY_S, ANY_D, ANY_I, ANY_D, ANY_I, ANY_I, ANY_I, ANY_I)
+    private val movement = Movement.Rest
     private val setup: (CoroutineDispatcher) -> CalcRecommendationUseCaseImpl = {
         `when`(sharedPrefs.getProfile()).thenReturn(Profile())
         CalcRecommendationUseCaseImpl(it, sharedPrefs)
@@ -32,7 +34,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_above20degrees_nojacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -42,7 +44,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_above15degreesHighDewPoint_noJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(dewPoint = 20, windChillTemp = 15.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -52,7 +54,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_above15degreesNoDewPoint_summerJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val result = it.execute(params).first()
 
@@ -62,7 +64,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_above10degrees_normalJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 10.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -72,7 +74,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testJacket_under10degrees_winterJacket() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 9.9)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -82,7 +84,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testTop_under10degrees_sweater() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 9.9)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -92,7 +94,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testTop_above10degrees_vest() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 10.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -102,7 +104,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testTop_above15degrees_tshirt() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -112,7 +114,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testBottom_under15degrees_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 14.9)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -122,7 +124,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testBottom_above15degreesMuggy_shorts() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0, dewPoint = 20)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -132,7 +134,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testBottom_above15degreesNotMuggy_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 15.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -142,7 +144,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testBottom_above20degrees_short() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -152,7 +154,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testBottom_above20degreesRaining_long() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windChillTemp = 20.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -162,7 +164,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_isMuggy_showMuggyMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(dewPoint = 20)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -172,11 +174,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_isSunny_showSunnyMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfSun = 100)
-        val params = CalcRecommendationUseCaseImpl.Params(
-            Weather.Day.DAY_AFTER_TOMORROW,
-            forecast,
-            movement
-        )
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -186,7 +184,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_isFreezing_showFreezingMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(windChillTemp = 5.0)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -196,7 +194,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_isRainingHighWind_showWindyRainMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windForce = 5)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -206,7 +204,7 @@ class CalcRecommendationUseCaseImplTest {
     @Test
     fun testExtras_isRainingLowWind_showRainMessage() = runUseCase(setup) {
         val forecast = anyForecast.copy(chanceOfPrecipitation = 100, windForce = 4)
-        val params = CalcRecommendationUseCaseImpl.Params(Weather.Day.NOW, forecast, movement)
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -222,11 +220,7 @@ class CalcRecommendationUseCaseImplTest {
             chanceOfPrecipitation = 100,
             windForce = 4,
         )
-        val params = CalcRecommendationUseCaseImpl.Params(
-            Weather.Day.DAY_AFTER_TOMORROW,
-            forecast,
-            movement
-        )
+        val params = CalcRecommendationUseCaseImpl.Params(forecast, movement)
 
         val actual = it.execute(params).first()
 
@@ -243,207 +237,41 @@ class CalcRecommendationUseCaseImplTest {
     }
 
     @Test
-    fun `testActuarialTemperature normalMale30 noDiff`() {
-        val profile = Profile(Profile.Thermoception.Normal, Profile.Gender.Male, 30)
+    fun `testActuarialTemperature normal noDiff`() {
+        val profile = Profile(Profile.Thermoception.Normal)
         val baselineTemp = 20.0
 
         assertEquals(
             baselineTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp), movement),
             0.01
         )
     }
 
     @Test
-    fun `testActuarialTemperature coldMale30 minus2`() {
-        val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Male, 30)
+    fun `testActuarialTemperature cold minus2`() {
+        val profile = Profile(Profile.Thermoception.Cold)
         val baselineTemp = 20.0
         val expectedTemp = baselineTemp - 2.5
 
         assertEquals(
             expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp), movement),
             0.01
         )
     }
 
     @Test
-    fun `testActuarialTemperature warmMale30 plus2`() {
-        val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Male, 30)
+    fun `testActuarialTemperature warm plus2`() {
+        val profile = Profile(Profile.Thermoception.Warm)
         val baselineTemp = 20.0
         val expectedTemp = baselineTemp + 2.5
 
         assertEquals(
             expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
+            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp), movement),
             0.01
         )
-    }
-
-    @Test
-    fun `testActuarialTemperature normalFemale30 minus2,5`() {
-        val profile = Profile(Profile.Thermoception.Normal, Profile.Gender.Female, 30)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2.5
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature coldFemale30 minus4,5`() {
-        val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Female, 30)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2.5 - 2.5
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature warmFemale30 plus4,5`() {
-        val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Female, 30)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2.5 - 2.5
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature normalMale100 minus2`() {
-        val profile = Profile(Profile.Thermoception.Normal, Profile.Gender.Male, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature coldMale100 minus4`() {
-        val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Male, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2 - 2.5
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature warmMale100 noDiff`() {
-        val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Male, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2.5 - 2
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature normalFemale100 minus4,5`() {
-        val profile = Profile(Profile.Thermoception.Normal, Profile.Gender.Female, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2.5 - 2
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature coldFemale100 minus6,5`() {
-        val profile = Profile(Profile.Thermoception.Cold, Profile.Gender.Female, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp - 2 - 2.5 - 2.5
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testActuarialTemperature warmFemale100 plus2,5`() {
-        val profile = Profile(Profile.Thermoception.Warm, Profile.Gender.Female, 100)
-        val baselineTemp = 20.0
-        val expectedTemp = baselineTemp + 2.5 - 2.5 - 2
-
-        assertEquals(
-            expectedTemp,
-            actuarialTemperature(profile, anyForecast.copy(windChillTemp = baselineTemp)),
-            0.01
-        )
-    }
-
-    @Test
-    fun `testIsMuggy 18 true`() {
-        val dewPoint = 20
-
-        assertTrue(dewPoint.isMuggy())
-    }
-
-    @Test
-    fun `testIsMuggy dewPoint15 false`() {
-        val dewPoint = 19
-
-        assertFalse(dewPoint.isMuggy())
-    }
-
-    @Test
-    fun `testIsMuggy dewPointNull false`() {
-        val dewPoint = null
-
-        assertFalse(dewPoint.isMuggy())
-    }
-
-    @Test
-    fun `testIsSummer dateMay true`() {
-        val may = LocalDate.of(2022, 5, 1)
-
-        assertTrue(may.isWarmMonth())
-    }
-
-    @Test
-    fun `testIsSummer dateSeptember true`() {
-        val september = LocalDate.of(2022, 9, 30)
-
-        assertTrue(september.isWarmMonth())
-    }
-
-    @Test
-    fun `testIsSummer dateApril false`() {
-        val april = LocalDate.of(2022, 4, 30)
-
-        assertFalse(april.isWarmMonth())
-    }
-
-    @Test
-    fun `testIsSummer dateOctober true`() {
-        val october = LocalDate.of(2022, 10, 1)
-
-        assertFalse(october.isWarmMonth())
     }
 
     @Test
