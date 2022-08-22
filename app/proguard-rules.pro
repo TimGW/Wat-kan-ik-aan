@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class nl.watkanikaan.app.domain.model.** { *; }
+-keepclassmembers class nl.watkanikaan.app.domain.model.** { *; }
+
+-keep class nl.watkanikaan.app.data.model.** { *; }
+-keepclassmembers class nl.watkanikaan.app.data.model.** { *; }
+
+-keep class kotlinx.coroutines.android.AndroidDispatcherFactory {*;}

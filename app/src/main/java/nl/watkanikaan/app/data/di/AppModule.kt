@@ -9,6 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import nl.watkanikaan.app.BuildConfig
 import nl.watkanikaan.app.data.local.AppDatabase
 import nl.watkanikaan.app.data.local.DefaultSharedPrefs
 import nl.watkanikaan.app.data.local.SharedPref
@@ -49,9 +50,12 @@ abstract class AppModule {
         @Singleton
         fun provideOkHttpClient(): OkHttpClient {
             val builder = OkHttpClient().newBuilder()
-            builder.addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+
+            if (BuildConfig.DEBUG) {
+                builder.addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
             return builder.build()
         }
 

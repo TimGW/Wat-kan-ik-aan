@@ -114,9 +114,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.3")
     implementation("androidx.fragment:fragment-ktx:1.5.0")
@@ -153,7 +150,6 @@ dependencies {
 
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.42")
-//    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
     kapt("com.google.dagger:hilt-android-compiler:2.42")
 
     // Navigation Component
